@@ -6,7 +6,7 @@ import FileUpload from './components/fileUpload/FileUpload';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {CheckboxesGroup} from './components/inputs/checkboxes';
 import {RadioButtonsGroup} from './components/inputs/radioButtons'
-import Button from './components/inputs/calculateButtonateButton';
+import Button from './components/inputs/calculateButton';
 import {MeasurementStart, MeasurementEnd} from './components/inputs/datePicker'
 
 
