@@ -27,7 +27,7 @@ const Container = styled.div`
   border-color: ${(props: DropzoneRootProps) => getColor(props)};
   border-style: dashed;
   background-color: #fafafa;
-  color: #7F7F7F;
+  color: #7f7f7f;
   outline: none;
   transition: border 0.24s ease-in-out;
 `;
@@ -39,7 +39,7 @@ interface Props {
 const FileUpload = ({ onDrop }: Props) => {
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
-    accept: '.'
+    accept: '.json'
   });
 
   return (
