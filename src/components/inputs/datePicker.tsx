@@ -1,31 +1,37 @@
-import React, { useState } from 'react';
+import React, { Dispatch, useState } from 'react';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-let CalculationOptionsMeasurementStart = '';
-let CalculationOptionsMeasurementEnd = '';
+interface PropsStart {
+  setMeasurementPeriodStart: Dispatch<Date | null>;
+  measurementPeriodStart: Date | null;
+}
+interface PropsEnd {
+  setMeasurementPeriodEnd: Dispatch<Date | null>;
+  measurementPeriodEnd: Date | null;
+}
 
-function MeasurementStart() {
+function MeasurementStart(props: PropsStart) {
   const [selectedDate, handleDateChange] = useState<Date | null>(new Date());
 
-  CalculationOptionsMeasurementStart = JSON.stringify(selectedDate);
+  props.setMeasurementPeriodStart(selectedDate);
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <DatePicker value={selectedDate} onChange={handleDateChange} />
+      <DatePicker value={props.measurementPeriodStart} onChange={handleDateChange} />
     </MuiPickersUtilsProvider>
   );
 }
 
-function MeasurementEnd() {
+function MeasurementEnd(props: PropsEnd) {
   const [selectedDate, handleDateChange] = useState<Date | null>(new Date());
-  CalculationOptionsMeasurementEnd = JSON.stringify(selectedDate);
+  props.setMeasurementPeriodEnd(selectedDate);
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <DatePicker value={selectedDate} onChange={handleDateChange} />
+      <DatePicker value={props.measurementPeriodEnd} onChange={handleDateChange} />
     </MuiPickersUtilsProvider>
   );
 }
 
-export { MeasurementStart, CalculationOptionsMeasurementStart, MeasurementEnd, CalculationOptionsMeasurementEnd };
+export { MeasurementStart, MeasurementEnd };

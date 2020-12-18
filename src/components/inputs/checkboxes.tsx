@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-let CalculationOptionsCheckboxes = {};
+interface Props {
+  setCalculationOptions: Dispatch<any>;
+  calculationOptions: any;
+}
 
-function CheckboxesGroup() {
+function CheckboxesGroup(props: Props) {
   const [state, setState] = React.useState({
     includeClauseResults: false,
     includePrettyResults: false,
@@ -15,10 +18,10 @@ function CheckboxesGroup() {
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.setCalculationOptions({ ...state, [event.target.name]: event.target.checked });
+
     setState({ ...state, [event.target.name]: event.target.checked });
   };
-
-  CalculationOptionsCheckboxes = state;
 
   return (
     <FormGroup>
@@ -71,4 +74,4 @@ function CheckboxesGroup() {
   );
 }
 
-export { CheckboxesGroup, CalculationOptionsCheckboxes };
+export { CheckboxesGroup };
