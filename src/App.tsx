@@ -108,10 +108,12 @@ export default function App() {
             variant="contained"
             color="primary"
             onClick={() => {
-              console.log({ 'type': outputType,
+              console.log({
+                type: outputType,
                 'Measurement Period Start': measurementPeriodStart,
                 'Measurement Period End': measurementPeriodEnd,
-                'Calculation Options': calculationOptions});
+                'Calculation Options': calculationOptions
+              });
             }}
           >
             Calculate
