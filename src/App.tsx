@@ -80,13 +80,6 @@ export default function App() {
     includePrettyResults: false
   });
 
-  const options = {
-    type: outputType,
-    'Measurement Period Start': measurementPeriodStart,
-    'Measurement Period End': measurementPeriodEnd,
-    'Calculation Options': calculationOptions
-  };
-
   return (
     <div className={classes.root}>
       <Grid>
@@ -115,7 +108,10 @@ export default function App() {
             variant="contained"
             color="primary"
             onClick={() => {
-              console.log(options);
+              console.log({ 'type': outputType,
+                'Measurement Period Start': measurementPeriodStart,
+                'Measurement Period End': measurementPeriodEnd,
+                'Calculation Options': calculationOptions});
             }}
           >
             Calculate
