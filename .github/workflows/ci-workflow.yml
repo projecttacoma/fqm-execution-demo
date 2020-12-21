@@ -13,6 +13,6 @@ jobs:
           node-version: '12.x'
       - run: npm ci
       - run: npm run prettier
-      - run: CI=true npm run build
+      - run: npm run build
         env:
           CI: true
