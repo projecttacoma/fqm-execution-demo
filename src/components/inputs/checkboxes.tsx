@@ -1,10 +1,10 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 interface Props {
-  setCalculationOptions: Dispatch<any>;
+  setCalculationOptions: Dispatch<SetStateAction<any>>;
   calculationOptions: any;
 }
 

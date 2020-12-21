@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { RadioButtonsGroup } from '../inputs/radioButtons';
 import { CheckboxesGroup } from '../inputs/checkboxes';
-import { MeasurementStart, MeasurementEnd } from '../inputs/datePicker';
+import { MeasurementDatePicker } from '../inputs/datePicker';
 
 interface Props {
   setOutputType: Dispatch<SetStateAction<string>>;
@@ -30,14 +30,14 @@ export default function OptionsRow(props: Props) {
       </Grid>
       <Grid item xs={4}>
         <h3>Measurement Start: </h3>
-        <MeasurementStart
-          setMeasurementPeriodStart={props.setMeasurementPeriodStart}
-          measurementPeriodStart={props.measurementPeriodStart}
+        <MeasurementDatePicker
+          setMeasurementPeriodDate={props.setMeasurementPeriodStart}
+          measurementPeriodDate={props.measurementPeriodStart}
         />
         <h3>Measurement End: </h3>
-        <MeasurementEnd
-          setMeasurementPeriodEnd={props.setMeasurementPeriodEnd}
-          measurementPeriodEnd={props.measurementPeriodEnd}
+        <MeasurementDatePicker
+          setMeasurementPeriodDate={props.setMeasurementPeriodEnd}
+          measurementPeriodDate={props.measurementPeriodEnd}
         />
       </Grid>
     </React.Fragment>

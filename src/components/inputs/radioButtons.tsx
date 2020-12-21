@@ -1,11 +1,11 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 
 interface Props {
-  setOutputType: Dispatch<string>;
+  setOutputType: Dispatch<SetStateAction<string>>;
   outputType: string;
 }
 
