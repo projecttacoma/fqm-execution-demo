@@ -7,6 +7,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import OptionsRow from './components/formatting/optionsRow';
 import InputRow from './components/formatting/inputRow';
 import Button from '@material-ui/core/Button';
+import { Calculator, CalculatorTypes } from 'fqm-execution';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,7 +53,6 @@ export default function App() {
     const reader = new FileReader();
     reader.onload = () => {
       setMeasureBundle(JSON.parse(reader.result as string));
-      console.log(JSON.parse(reader.result as string));
     };
 
     reader.readAsText(measureBundleFile);
@@ -65,18 +65,17 @@ export default function App() {
     const reader = new FileReader();
     reader.onload = () => {
       setPatientBundle(JSON.parse(reader.result as string));
-      console.log(JSON.parse(reader.result as string));
     };
     reader.readAsText(patientBundleFile);
   }, []);
 
   const [outputType, setOutputType] = useState<string>('raw');
-  const [measurementPeriodStart, setMeasurementPeriodStart] = useState<Date | null>(null);
-  const [measurementPeriodEnd, setMeasurementPeriodEnd] = useState<Date | null>(null);
-  const [calculationOptions, setCalculationOptions] = useState<any>({
+  const [measurementPeriodStart, setMeasurementPeriodStart] = useState<Date | null>(new Date('1/1/2019'));
+  const [measurementPeriodEnd, setMeasurementPeriodEnd] = useState<Date | null>(new Date('12/31/2019'));
+  const [calculationOptions, setCalculationOptions] = useState<CalculatorTypes.CalculationOptions>({
     calculateHTML: false,
     calculateSDEs: false,
-    includeCaluseResults: false,
+    includeClauseResults: false,
     includeHighlighting: false,
     includePrettyResults: false
   });
@@ -109,12 +108,20 @@ export default function App() {
             variant="contained"
             color="primary"
             onClick={() => {
-              console.log({
-                type: outputType,
-                'Measurement Period Start': measurementPeriodStart,
-                'Measurement Period End': measurementPeriodEnd,
-                'Calculation Options': calculationOptions
-              });
+              const options = {
+                measurementPeriodStart: measurementPeriodStart?.toISOString(),
+                measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
+                ...calculationOptions
+              };
+              let results;
+              if (outputType === 'rawResults') {
+                results = Calculator.calculateRaw(measureBundle, [patientBundle], options);
+              } else if (outputType === 'detailedResults') {
+                results = Calculator.calculate(measureBundle, [patientBundle], options);
+              } else if (outputType === 'measureReports') {
+                results = Calculator.calculateMeasureReports(measureBundle, [patientBundle], options);
+              }
+              console.log(results);
             }}
           >
             Calculate

@@ -17,9 +17,9 @@ export default function RadioButtonsGroup(props: Props) {
   return (
     <FormControl component="fieldset">
       <RadioGroup name="type" value={props.outputType} onChange={handleChange}>
-        <FormControlLabel control={<Radio color="primary" />} value="raw" label="Raw" />
-        <FormControlLabel control={<Radio color="primary" />} value="detailed" label="Detailed" />
-        <FormControlLabel control={<Radio color="primary" />} value="results" label="Results" />
+        <FormControlLabel control={<Radio color="primary" />} value="rawResults" label="Raw" />
+        <FormControlLabel control={<Radio color="primary" />} value="detailedResults" label="Detailed" />
+        <FormControlLabel control={<Radio color="primary" />} value="measureReports" label="Measure Reports" />
       </RadioGroup>
     </FormControl>
   );

@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { RadioButtonsGroup } from '../inputs/radioButtons';
 import { CheckboxesGroup } from '../inputs/checkboxes';
 import { MeasurementDatePicker } from '../inputs/datePicker';
+import { CalculatorTypes } from 'fqm-execution';
 
 interface Props {
   setOutputType: Dispatch<SetStateAction<string>>;
@@ -11,8 +12,8 @@ interface Props {
   measurementPeriodStart: Date | null;
   setMeasurementPeriodEnd: Dispatch<SetStateAction<Date | null>>;
   measurementPeriodEnd: Date | null;
-  setCalculationOptions: Dispatch<SetStateAction<any>>;
-  calculationOptions: any;
+  setCalculationOptions: Dispatch<SetStateAction<CalculatorTypes.CalculationOptions>>;
+  calculationOptions: CalculatorTypes.CalculationOptions;
 }
 export default function OptionsRow(props: Props) {
   return (

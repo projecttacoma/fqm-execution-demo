@@ -10,7 +10,7 @@ interface Props {
 function MeasurementDatePicker(props: Props) {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <DatePicker value={props.measurementPeriodDate} onChange={props.setMeasurementPeriodDate} />
+      <DatePicker value={props.measurementPeriodDate} format="MM/dd/yyyy" onChange={props.setMeasurementPeriodDate} />
     </MuiPickersUtilsProvider>
   );
 }
