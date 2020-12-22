@@ -2,25 +2,16 @@ import React, { Dispatch, SetStateAction } from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { CalculatorTypes } from 'fqm-execution';
 
 interface Props {
-  setCalculationOptions: Dispatch<SetStateAction<any>>;
-  calculationOptions: any;
+  setCalculationOptions: Dispatch<SetStateAction<CalculatorTypes.CalculationOptions>>;
+  calculationOptions: CalculatorTypes.CalculationOptions;
 }
 
 function CheckboxesGroup(props: Props) {
-  const [state, setState] = React.useState({
-    includeClauseResults: false,
-    includePrettyResults: false,
-    includeHighlighting: false,
-    calculateSDEs: false,
-    calculateHTML: false
-  });
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setCalculationOptions({ ...state, [event.target.name]: event.target.checked });
-
-    setState({ ...state, [event.target.name]: event.target.checked });
+    props.setCalculationOptions({ ...props.calculationOptions, [event.target.name]: event.target.checked });
   };
 
   return (
@@ -28,7 +19,7 @@ function CheckboxesGroup(props: Props) {
       <FormControlLabel
         control={
           <Checkbox
-            checked={state.includeClauseResults}
+            checked={props.calculationOptions.includeClauseResults}
             onChange={handleChange}
             name="includeClauseResults"
             color="primary"
@@ -39,7 +30,7 @@ function CheckboxesGroup(props: Props) {
       <FormControlLabel
         control={
           <Checkbox
-            checked={state.includePrettyResults}
+            checked={props.calculationOptions.includePrettyResults}
             onChange={handleChange}
             name="includePrettyResults"
             color="primary"
@@ -50,7 +41,7 @@ function CheckboxesGroup(props: Props) {
       <FormControlLabel
         control={
           <Checkbox
-            checked={state.includeHighlighting}
+            checked={props.calculationOptions.includeHighlighting}
             onChange={handleChange}
             name="includeHighlighting"
             color="primary"
@@ -60,13 +51,23 @@ function CheckboxesGroup(props: Props) {
       />
       <FormControlLabel
         control={
-          <Checkbox checked={state.calculateSDEs} onChange={handleChange} name="calculateSDEs" color="primary" />
+          <Checkbox
+            checked={props.calculationOptions.calculateSDEs}
+            onChange={handleChange}
+            name="calculateSDEs"
+            color="primary"
+          />
         }
         label="Calculate SDEs"
       />
       <FormControlLabel
         control={
-          <Checkbox checked={state.calculateHTML} onChange={handleChange} name="calculateHTML" color="primary" />
+          <Checkbox
+            checked={props.calculationOptions.calculateHTML}
+            onChange={handleChange}
+            name="calculateHTML"
+            color="primary"
+          />
         }
         label="Calculate HTML"
       />
