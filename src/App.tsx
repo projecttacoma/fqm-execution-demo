@@ -7,6 +7,7 @@ import OptionsRow from './components/formatting/optionsRow';
 import InputRow from './components/formatting/inputRow';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
+import ReactJson from 'react-json-view';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +39,8 @@ export default function App() {
 
   const [measureFileName, setMeasureFileName] = useState<string | null>(null);
   const [patientFileName, setPatientFileName] = useState<string | null>(null);
+
+  const [results, setResults] = useState<any>({});
 
   const [measureBundle, setMeasureBundle] = useState<any>(null);
   const [patientBundle, setPatientBundle] = useState<any>(null);
@@ -75,11 +78,6 @@ export default function App() {
     includeHighlighting: false,
     includePrettyResults: false
   });
-  const options = {
-    measurementPeriodStart: measurementPeriodStart?.toISOString(),
-    measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
-    ...calculationOptions
-  };
 
   return (
     <div className={classes.root}>
@@ -127,28 +125,35 @@ export default function App() {
                 includeHighlighting: false,
                 includePrettyResults: false
               });
+              setResults({});
             }}
           >
             Reset
           </Button>
+
           <Button
             variant="contained"
             color="primary"
             onClick={() => {
-              let results = {};
+              const options = {
+                measurementPeriodStart: measurementPeriodStart?.toISOString(),
+                measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
+                ...calculationOptions
+              };
               if (outputType === 'rawResults') {
-                results = Calculator.calculateRaw(measureBundle, [patientBundle], options);
+                setResults(Calculator.calculateRaw(measureBundle, [patientBundle], options));
               } else if (outputType === 'detailedResults') {
-                results = Calculator.calculate(measureBundle, [patientBundle], options);
+                setResults(Calculator.calculate(measureBundle, [patientBundle], options));
               } else if (outputType === 'measureReports') {
-                results = Calculator.calculateMeasureReports(measureBundle, [patientBundle], options);
+                setResults(Calculator.calculateMeasureReports(measureBundle, [patientBundle], options));
               }
-              console.log(results);
             }}
           >
             Calculate
           </Button>
         </Grid>
+        <h2>Results:</h2>
+        <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
       </Grid>
     </div>
   );
