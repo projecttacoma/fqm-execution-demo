@@ -36,11 +36,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function App() {
   const classes = useStyles();
 
-  let [measureFileName, setMeasureFileName] = useState<string | null>(null);
-  let [patientFileName, setPatientFileName] = useState<string | null>(null);
+  const [measureFileName, setMeasureFileName] = useState<string | null>(null);
+  const [patientFileName, setPatientFileName] = useState<string | null>(null);
 
-  let [measureBundle, setMeasureBundle] = useState<any>(null);
-  let [patientBundle, setPatientBundle] = useState<any>(null);
+  const [measureBundle, setMeasureBundle] = useState<any>(null);
+  const [patientBundle, setPatientBundle] = useState<any>(null);
 
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
@@ -110,15 +110,23 @@ export default function App() {
           </Grid>
         </Grid>
 
-        <Grid container justify="space-between">
+        <Grid container justify="flex-end">
           <Button
             variant="contained"
-            color="primary"
             onClick={() => {
               setMeasureFileName(null);
               setPatientFileName(null);
               setMeasureBundle(null);
               setPatientBundle(null);
+              setMeasurementPeriodStart(new Date('1/1/2019'));
+              setMeasurementPeriodEnd(new Date('12/31/2019'));
+              setCalculationOptions({
+                calculateHTML: false,
+                calculateSDEs: false,
+                includeClauseResults: false,
+                includeHighlighting: false,
+                includePrettyResults: false
+              });
             }}
           >
             Reset
