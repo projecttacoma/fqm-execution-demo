@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useState } from 'react';
 import 'date-fns';
 import './index.css';
@@ -40,18 +39,14 @@ export default function App() {
   const [measureFileName, setMeasureFileName] = useState<string | null>(null);
   const [patientFileName, setPatientFileName] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<any>(null);
-
   const [measureBundle, setMeasureBundle] = useState<any>(null);
   const [patientBundle, setPatientBundle] = useState<any>(null);
 
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
-    setMeasureFileName(measureBundleFile);
-    setLoading(true);
     const reader = new FileReader();
     reader.onload = () => {
+      setMeasureFileName(measureBundleFile.path);
       setMeasureBundle(JSON.parse(reader.result as string));
     };
 
@@ -60,12 +55,13 @@ export default function App() {
 
   const onPatientUpload = useCallback(files => {
     const patientBundleFile = files[0];
-    setPatientFileName(patientBundleFile);
-    setLoading(true);
+
     const reader = new FileReader();
     reader.onload = () => {
+      setPatientFileName(patientBundleFile.path);
       setPatientBundle(JSON.parse(reader.result as string));
     };
+
     reader.readAsText(patientBundleFile);
   }, []);
 
@@ -79,6 +75,11 @@ export default function App() {
     includeHighlighting: false,
     includePrettyResults: false
   });
+  const options = {
+    measurementPeriodStart: measurementPeriodStart?.toISOString(),
+    measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
+    ...calculationOptions
+  };
 
   return (
     <div className={classes.root}>
@@ -86,7 +87,12 @@ export default function App() {
         <h1 id="header">FQM Execution Demo</h1>
         <Grid container justify="space-evenly">
           <Grid container item xs={11} spacing={2} alignItems="center">
-            <InputRow onMeasureUpload={onMeasureUpload} onPatientUpload={onPatientUpload} />
+            <InputRow
+              onMeasureUpload={onMeasureUpload}
+              onPatientUpload={onPatientUpload}
+              measureFileName={measureFileName}
+              patientFileName={patientFileName}
+            />
           </Grid>
         </Grid>
         <Grid container spacing={1} justify="space-evenly">
@@ -103,17 +109,33 @@ export default function App() {
             />
           </Grid>
         </Grid>
+
         <Grid container justify="flex-end">
+          <Button
+            variant="contained"
+            onClick={() => {
+              setMeasureFileName(null);
+              setPatientFileName(null);
+              setMeasureBundle(null);
+              setPatientBundle(null);
+              setMeasurementPeriodStart(new Date('1/1/2019'));
+              setMeasurementPeriodEnd(new Date('12/31/2019'));
+              setCalculationOptions({
+                calculateHTML: false,
+                calculateSDEs: false,
+                includeClauseResults: false,
+                includeHighlighting: false,
+                includePrettyResults: false
+              });
+            }}
+          >
+            Reset
+          </Button>
           <Button
             variant="contained"
             color="primary"
             onClick={() => {
-              const options = {
-                measurementPeriodStart: measurementPeriodStart?.toISOString(),
-                measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
-                ...calculationOptions
-              };
-              let results;
+              let results = {};
               if (outputType === 'rawResults') {
                 results = Calculator.calculateRaw(measureBundle, [patientBundle], options);
               } else if (outputType === 'detailedResults') {
