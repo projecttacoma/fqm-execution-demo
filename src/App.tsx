@@ -40,7 +40,7 @@ export default function App() {
   const [measureFileName, setMeasureFileName] = useState<string | null>(null);
   const [patientFileName, setPatientFileName] = useState<string | null>(null);
 
-  const [results, setResults] = useState<any>({});
+  const [results, setResults] = useState<any>(null);
 
   const [measureBundle, setMeasureBundle] = useState<any>(null);
   const [patientBundle, setPatientBundle] = useState<any>(null);
@@ -125,7 +125,7 @@ export default function App() {
                 includeHighlighting: false,
                 includePrettyResults: false
               });
-              setResults({});
+              setResults(null);
             }}
           >
             Reset
@@ -153,7 +153,7 @@ export default function App() {
           </Button>
         </Grid>
         <h2>Results:</h2>
-        <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+        {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
       </Grid>
     </div>
   );
