@@ -177,6 +177,8 @@ export default function App() {
                 }
               } else if (outputType === 'measureReports') {
                 setResults(Calculator.calculateMeasureReports(measureBundle, [patientBundle], options));
+              } else if (outputType === 'gapsInCare') {
+                setResults(Calculator.calculateGapsInCare(measureBundle, [patientBundle], options));
               }
             }}
           >
