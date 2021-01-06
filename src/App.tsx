@@ -8,6 +8,7 @@ import InputRow from './components/formatting/inputRow';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import ReactJson from 'react-json-view';
+import parse from 'html-react-parser';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,9 +31,19 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       display: 'flex-grow'
+    },
+    highlightedMarkup: {
+      '& pre': {
+        whiteSpace: 'pre-wrap'
+      }
     }
   })
 );
+
+interface HTML {
+  groupId: string;
+  html: string;
+}
 
 export default function App() {
   const classes = useStyles();
@@ -41,6 +52,8 @@ export default function App() {
   const [patientFileName, setPatientFileName] = useState<string | null>(null);
 
   const [results, setResults] = useState<any>(null);
+
+  const [htmls, setHTMLs] = useState<HTML[]>([]);
 
   const [measureBundle, setMeasureBundle] = useState<any>(null);
   const [patientBundle, setPatientBundle] = useState<any>(null);
@@ -126,6 +139,7 @@ export default function App() {
                 includePrettyResults: false
               });
               setResults(null);
+              setHTMLs([]);
             }}
           >
             Reset
@@ -140,10 +154,27 @@ export default function App() {
                 measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
                 ...calculationOptions
               };
+
               if (outputType === 'rawResults') {
                 setResults(Calculator.calculateRaw(measureBundle, [patientBundle], options));
               } else if (outputType === 'detailedResults') {
-                setResults(Calculator.calculate(measureBundle, [patientBundle], options));
+                let detailedResultsCalculation = Calculator.calculate(measureBundle, [patientBundle], options);
+                setResults(detailedResultsCalculation);
+                let IDhtml = [];
+                if (detailedResultsCalculation !== null && calculationOptions.calculateHTML === true) {
+                  let i: any;
+                  for (i in detailedResultsCalculation.results[0].detailedResults) {
+                    if (detailedResultsCalculation.results[0].detailedResults !== undefined) {
+                      IDhtml.push({
+                        groupId: detailedResultsCalculation.results[0].detailedResults[i].groupId,
+                        html: detailedResultsCalculation.results[0].detailedResults[i].html!
+                      });
+                    }
+                  }
+                  setHTMLs(IDhtml);
+                } else {
+                  setHTMLs([]);
+                }
               } else if (outputType === 'measureReports') {
                 setResults(Calculator.calculateMeasureReports(measureBundle, [patientBundle], options));
               }
@@ -152,8 +183,27 @@ export default function App() {
             Calculate
           </Button>
         </Grid>
-        <h2>Results:</h2>
-        {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
+        <Grid container>
+          <Grid container item xs={6} direction="row">
+            <div>
+              <h2>Results:</h2>
+              {results && (
+                <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+              )}
+            </div>
+          </Grid>
+          <Grid container item xs={6} direction="row">
+            {htmls &&
+              htmls.map(html => {
+                return (
+                  <div key={html.groupId} className={classes.highlightedMarkup}>
+                    <h2>HTML:</h2>
+                    {parse(html.html)}
+                  </div>
+                );
+              })}
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   );
