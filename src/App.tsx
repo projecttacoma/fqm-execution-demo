@@ -31,6 +31,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       display: 'flex-grow'
+    },
+    highlightedMarkup: {
+      '& pre': {
+        whiteSpace: 'pre-wrap'
+      }
     }
   })
 );
@@ -187,13 +192,13 @@ export default function App() {
               )}
             </div>
           </Grid>
-          <Grid container item xs={6} direction="row" wrap="nowrap">
+          <Grid container item xs={6} direction="row">
             {htmls &&
               htmls.map(html => {
                 return (
-                  <div key={html.groupId}>
+                  <div key={html.groupId} className={classes.highlightedMarkup}>
                     <h2>HTML:</h2>
-                    <h6>{parse(html.html)}</h6>
+                    {parse(html.html)}
                   </div>
                 );
               })}
