@@ -33,7 +33,7 @@
     "eject": "react-scripts eject",
     "prettier": "prettier --check \"**/*.{js,ts,tsx}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,tsx}\"",
-    "prepare": "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
