@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import ReactJson from 'react-json-view';
 import parse from 'html-react-parser';
+import fileDownload from 'js-file-download';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -250,6 +251,9 @@ export default function App() {
               {results && (
                 <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
               )}
+              {results&&<Button variant="contained"
+            color="primary"
+            onClick={() => {fileDownload(JSON.stringify(results),`results-${measureFileName}.json`)}}>Download</Button>}
             </div>
           </Grid>
           <Grid container item xs={6} direction="row">
