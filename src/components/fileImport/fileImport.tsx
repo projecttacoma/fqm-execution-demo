@@ -21,13 +21,7 @@ export default function MultipleSelect(props: Props) {
   return (
     <div style={{ width: '100%' }}>
       <FormControl className={classes.root}>
-        <Select
-          value={props.selectedValue}
-          onChange={props.handleChange}
-          inputProps={{
-            id: 'select-multiple-native'
-          }}
-        >
+        <Select value={props.selectedValue} onChange={props.handleChange}>
           {props.options.map(option => (
             <MenuItem key={option} value={option}>
               {option}

@@ -83,7 +83,8 @@ export default function App() {
   }, []);
 
   const onMeasureDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const name = event.target.value as string;
+    let name = event.target.value as string;
+
     fetch(
       `https://raw.githubusercontent.com/DBCG/connectathon/master/fhir401/bundles/measure/` +
         name +
@@ -94,8 +95,8 @@ export default function App() {
       .then(response => response.json())
       .then(data => {
         setMeasureFileName(name);
+
         setMeasureBundle(data);
-        console.log(data);
         return fetch(
           `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`
         );
@@ -112,6 +113,7 @@ export default function App() {
       })
       .catch(error => console.log('error: ', error));
   };
+
   const onPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const patientName = event.target.value as string;
 
@@ -157,11 +159,14 @@ export default function App() {
               onMeasureUpload={onMeasureUpload}
               onPatientUpload={onPatientUpload}
               measureFileName={measureFileName}
+              setMeasureFileName={setMeasureFileName}
               patientFileName={patientFileName}
+              setPatientFileName={setPatientFileName}
               onMeasureDropdownChange={onMeasureDropdownChange}
               onPatientDropdownChange={onPatientDropdownChange}
               measureOptions={measureOptions}
               patientOptions={patientOptions}
+              setPatientOptions={setPatientOptions}
             />
           </Grid>
         </Grid>
@@ -256,7 +261,12 @@ export default function App() {
                   variant="contained"
                   color="primary"
                   onClick={() => {
-                    fileDownload(JSON.stringify(results), `results-${measureFileName}.json`);
+                    fileDownload(
+                      JSON.stringify(results),
+                      measureFileName?.includes('.json')
+                        ? `results-${measureFileName}`
+                        : `results-${measureFileName}.json`
+                    );
                   }}
                 >
                   Download
