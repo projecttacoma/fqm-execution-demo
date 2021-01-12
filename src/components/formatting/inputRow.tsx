@@ -1,30 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Grid from '@material-ui/core/Grid';
-import FileUpload from '../fileUpload/FileUpload';
-import DropDown from '../fileImport/fileImport';
+import { MeasureFileUpload, PatientFileUpload } from '../fileSelection/fileUpload';
+import { MeasureDropdown, PatientDropdown } from '../fileSelection/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
-
-interface Props {
-  onMeasureUpload: (files: any) => void;
-  onPatientUpload: (files: any) => void;
-  measureFileName: string | null;
-  setMeasureFileName: (files: any) => void;
-  patientFileName: string | null;
-  setPatientFileName: (files: any) => void;
-  onMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  onECQMMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  onPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  onECQMPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  measureOptions: string[];
-  ecqmMeasureOptions: string[];
-  patientOptions: string[];
-  ecqmPatientOptions: string[];
-  setPatientOptions: any;
-  setECQMPatientOptions: any;
-  showDropdowns: boolean;
-}
+import { InputRowContext } from '../../contexts/inputRowContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,24 +14,26 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
-export default function InputRow(props: Props) {
+export default function InputRow() {
   const classes = useStyles();
+  const { measureFileName, patientFileName, setPatientFileName, setMeasureFileName, setPatientOptions } = useContext(
+    InputRowContext
+  );
   return (
     <React.Fragment>
       <Grid item xs={6}>
         <h2>Measure Bundle: </h2>
-        {props.measureFileName !== null && <h3>Current Measure Bundle:</h3>}
-        {props.measureFileName !== null && (
+        {measureFileName !== null && <h3>Current Measure Bundle:</h3>}
+        {measureFileName !== null && (
           <Grid container>
-            <h3 className={classes.root}> {props.measureFileName}</h3>
-            {props.measureFileName !== null && (
+            <h3 className={classes.root}> {measureFileName}</h3>{' '}
+            {measureFileName !== null && (
               <IconButton
                 aria-label="delete"
                 onClick={() => {
-                  props.setMeasureFileName(null);
-                  props.setPatientOptions([]);
-                  props.setECQMPatientOptions([]);
-                  props.setPatientFileName(null);
+                  setMeasureFileName(null);
+                  setPatientOptions([]);
+                  setPatientFileName(null);
                 }}
               >
                 <DeleteIcon />
@@ -59,37 +42,20 @@ export default function InputRow(props: Props) {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <FileUpload onDrop={props.onMeasureUpload} />
-        {props.showDropdowns ? (
-          <>
-            <h4>OR Select From Connectathon Repository:</h4>
-            <DropDown
-              selectedValue={props.measureFileName || ''}
-              options={props.measureOptions}
-              handleChange={props.onMeasureDropdownChange}
-            />
-            <h4>OR Select From eCQM Measure Content Repository:</h4>
-            <DropDown
-              selectedValue={props.measureFileName || ''}
-              options={props.ecqmMeasureOptions}
-              handleChange={props.onECQMMeasureDropdownChange}
-            />
-          </>
-        ) : (
-          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
-        )}
+        <MeasureFileUpload /> <h4>OR Select From Connectathon Repository:</h4>
+        <MeasureDropdown />
       </Grid>
       <Grid item xs={6}>
         <h2>Patient Bundle: </h2>
-        {props.patientFileName !== null && <h3>Current Patient Bundle:</h3>}
-        {props.patientFileName !== null && (
+        {patientFileName !== null && <h3>Current Patient Bundle:</h3>}
+        {patientFileName !== null && (
           <Grid container>
-            <h3 className={classes.root}> {props.patientFileName}</h3>{' '}
-            {props.patientFileName !== null && (
+            <h3 className={classes.root}> {patientFileName}</h3>{' '}
+            {patientFileName !== null && (
               <IconButton
                 aria-label="delete"
                 onClick={() => {
-                  props.setPatientFileName(null);
+                  setPatientFileName(null);
                 }}
               >
                 <DeleteIcon />
@@ -98,25 +64,8 @@ export default function InputRow(props: Props) {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <FileUpload onDrop={props.onPatientUpload} />
-        {props.showDropdowns ? (
-          <>
-            <h4>OR Select From Connectathon Repository:</h4>
-            <DropDown
-              selectedValue={props.patientFileName || ''}
-              options={props.patientOptions}
-              handleChange={props.onPatientDropdownChange}
-            />
-            <h4>OR Select From eCQM Measure Content Repository:</h4>
-            <DropDown
-              selectedValue={props.patientFileName || ''}
-              options={props.ecqmPatientOptions}
-              handleChange={props.onECQMPatientDropdownChange}
-            />
-          </>
-        ) : (
-          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
-        )}
+        <PatientFileUpload /> <h4>OR Select From Connectathon Repository:</h4>
+        <PatientDropdown />
       </Grid>
     </React.Fragment>
   );

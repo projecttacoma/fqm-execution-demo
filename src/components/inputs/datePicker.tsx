@@ -1,18 +1,31 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useContext } from 'react';
 import DateFnsUtils from '@date-io/date-fns'; // choose your lib
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { OptionsRowContext } from '../../contexts/optionsRowContext';
 
-interface Props {
-  setMeasurementPeriodDate: Dispatch<SetStateAction<Date | null>>;
-  measurementPeriodDate: Date | null;
-}
-
-function MeasurementDatePicker(props: Props) {
+function MeasurementDateStart() {
+  const OptionsRowInfo = useContext(OptionsRowContext);
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <DatePicker value={props.measurementPeriodDate} format="MM/dd/yyyy" onChange={props.setMeasurementPeriodDate} />
+      <DatePicker
+        value={OptionsRowInfo.measurementPeriodStart}
+        format="MM/dd/yyyy"
+        onChange={OptionsRowInfo.setMeasurementPeriodStart}
+      />
+    </MuiPickersUtilsProvider>
+  );
+}
+function MeasurementDateEnd() {
+  const OptionsRowInfo = useContext(OptionsRowContext);
+  return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <DatePicker
+        value={OptionsRowInfo.measurementPeriodEnd}
+        format="MM/dd/yyyy"
+        onChange={OptionsRowInfo.setMeasurementPeriodEnd}
+      />
     </MuiPickersUtilsProvider>
   );
 }
 
-export { MeasurementDatePicker };
+export { MeasurementDateStart, MeasurementDateEnd };
