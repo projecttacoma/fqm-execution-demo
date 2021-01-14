@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FQM Execution Demo",
+  "name": "FQM Execution Library Demo Application",
   "icons": [
     {
       "src": "favicon.ico",
