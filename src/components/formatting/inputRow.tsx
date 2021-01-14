@@ -14,10 +14,15 @@ interface Props {
   patientFileName: string | null;
   setPatientFileName: (files: any) => void;
   onMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  onECQMMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  onECQMPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   measureOptions: string[];
+  ecqmMeasureOptions: string[];
   patientOptions: string[];
+  ecqmPatientOptions: string[];
   setPatientOptions: any;
+  setECQMPatientOptions: any;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,13 +41,14 @@ export default function InputRow(props: Props) {
         {props.measureFileName !== null && <h3>Current Measure Bundle:</h3>}
         {props.measureFileName !== null && (
           <Grid container>
-            <h3 className={classes.root}> {props.measureFileName}</h3>{' '}
+            <h3 className={classes.root}> {props.measureFileName}</h3>
             {props.measureFileName !== null && (
               <IconButton
                 aria-label="delete"
                 onClick={() => {
                   props.setMeasureFileName(null);
                   props.setPatientOptions([]);
+                  props.setECQMPatientOptions([]);
                   props.setPatientFileName(null);
                 }}
               >
@@ -57,6 +63,12 @@ export default function InputRow(props: Props) {
           selectedValue={props.measureFileName || ''}
           options={props.measureOptions}
           handleChange={props.onMeasureDropdownChange}
+        />
+        <h4>OR Select From eCQM Measure Content Repository:</h4>
+        <DropDown
+          selectedValue={props.measureFileName || ''}
+          options={props.ecqmMeasureOptions}
+          handleChange={props.onECQMMeasureDropdownChange}
         />
       </Grid>
       <Grid item xs={6}>
@@ -83,6 +95,12 @@ export default function InputRow(props: Props) {
           selectedValue={props.patientFileName || ''}
           options={props.patientOptions}
           handleChange={props.onPatientDropdownChange}
+        />
+        <h4>OR Select From eCQM Measure Content Repository:</h4>
+        <DropDown
+          selectedValue={props.patientFileName || ''}
+          options={props.ecqmPatientOptions}
+          handleChange={props.onECQMPatientDropdownChange}
         />
       </Grid>
     </React.Fragment>

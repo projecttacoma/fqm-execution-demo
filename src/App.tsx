@@ -60,7 +60,9 @@ export default function App() {
   const [patientBundle, setPatientBundle] = useState<any>(null);
 
   const [measureOptions, setMeasureOptions] = useState<string[]>([]);
+  const [ecqmMeasureOptions, setECQMMeasureOptions] = useState<string[]>([]);
   const [patientOptions, setPatientOptions] = useState<string[]>([]);
+  const [ecqmPatientOptions, setECQMPatientOptions] = useState<string[]>([]);
 
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
@@ -82,6 +84,36 @@ export default function App() {
     reader.readAsText(patientBundleFile);
   }, []);
 
+  const onECQMMeasureDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    let name = event.target.value as string;
+    fetch(
+      `https://raw.githubusercontent.com/cqframework/ecqm-content-r4/master/bundles/measure/` +
+        name +
+        `/` +
+        name +
+        `-bundle.json`
+    )
+      .then(response => response.json())
+      .then(data => {
+        setMeasureFileName(name);
+        setMeasureBundle(data);
+        return fetch(
+          `https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure/${name}/${name}-files`
+        );
+      })
+      .then(response => response.json())
+      .then(data => {
+        const names = data.map((n: { name: string }) => {
+          return n.name;
+        });
+        const filteredNames = names.filter((name: string) => {
+          return name.startsWith('tests');
+        });
+        setECQMPatientOptions(filteredNames);
+      })
+      .catch(error => console.log('error: ', error));
+  };
+
   const onMeasureDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     let name = event.target.value as string;
 
@@ -95,7 +127,6 @@ export default function App() {
       .then(response => response.json())
       .then(data => {
         setMeasureFileName(name);
-
         setMeasureBundle(data);
         return fetch(
           `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`
@@ -110,6 +141,7 @@ export default function App() {
           return name.startsWith('tests');
         });
         setPatientOptions(filteredNames);
+        setECQMPatientOptions([]);
       })
       .catch(error => console.log('error: ', error));
   };
@@ -119,6 +151,19 @@ export default function App() {
 
     fetch(
       `https://raw.githubusercontent.com/DBCG/connectathon/master/fhir401/bundles/measure/${measureFileName}/${measureFileName}-files/${patientName}`
+    )
+      .then(response => response.json())
+      .then(data => {
+        setPatientBundle(data);
+        setPatientFileName(patientName);
+      });
+  };
+
+  const onECQMPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const patientName = event.target.value as string;
+
+    fetch(
+      `https://raw.githubusercontent.com/cqframework/ecqm-content-r4/master/bundles/measure/${measureFileName}/${measureFileName}-files/${patientName}`
     )
       .then(response => response.json())
       .then(data => {
@@ -149,6 +194,17 @@ export default function App() {
       });
   }, []);
 
+  useEffect(() => {
+    fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`)
+      .then(response => response.json())
+      .then(data => {
+        const names = data.map((n: { name: string }) => {
+          return n.name;
+        });
+        setECQMMeasureOptions(names);
+      });
+  }, []);
+
   return (
     <div className={classes.root}>
       <Grid>
@@ -163,10 +219,15 @@ export default function App() {
               patientFileName={patientFileName}
               setPatientFileName={setPatientFileName}
               onMeasureDropdownChange={onMeasureDropdownChange}
+              onECQMMeasureDropdownChange={onECQMMeasureDropdownChange}
               onPatientDropdownChange={onPatientDropdownChange}
+              onECQMPatientDropdownChange={onECQMPatientDropdownChange}
               measureOptions={measureOptions}
+              ecqmMeasureOptions={ecqmMeasureOptions}
               patientOptions={patientOptions}
+              ecqmPatientOptions={ecqmPatientOptions}
               setPatientOptions={setPatientOptions}
+              setECQMPatientOptions={setECQMPatientOptions}
             />
           </Grid>
         </Grid>
@@ -218,7 +279,6 @@ export default function App() {
                 measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
                 ...calculationOptions
               };
-
               if (outputType === 'rawResults') {
                 setResults(Calculator.calculateRaw(measureBundle, [patientBundle], options));
               } else if (outputType === 'detailedResults') {
