@@ -4,7 +4,7 @@ import FileUpload from '../fileUpload/FileUpload';
 import DropDown from '../fileImport/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 
 interface Props {
   onMeasureUpload: (files: any) => void;
@@ -23,6 +23,7 @@ interface Props {
   ecqmPatientOptions: string[];
   setPatientOptions: any;
   setECQMPatientOptions: any;
+  showDropdowns: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -58,18 +59,25 @@ export default function InputRow(props: Props) {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <FileUpload onDrop={props.onMeasureUpload} /> <h4>OR Select From Connectathon Repository:</h4>
-        <DropDown
-          selectedValue={props.measureFileName || ''}
-          options={props.measureOptions}
-          handleChange={props.onMeasureDropdownChange}
-        />
-        <h4>OR Select From eCQM Measure Content Repository:</h4>
-        <DropDown
-          selectedValue={props.measureFileName || ''}
-          options={props.ecqmMeasureOptions}
-          handleChange={props.onECQMMeasureDropdownChange}
-        />
+        <FileUpload onDrop={props.onMeasureUpload} />
+        {props.showDropdowns ? (
+          <>
+            <h4>OR Select From Connectathon Repository:</h4>
+            <DropDown
+              selectedValue={props.measureFileName || ''}
+              options={props.measureOptions}
+              handleChange={props.onMeasureDropdownChange}
+            />
+            <h4>OR Select From eCQM Measure Content Repository:</h4>
+            <DropDown
+              selectedValue={props.measureFileName || ''}
+              options={props.ecqmMeasureOptions}
+              handleChange={props.onECQMMeasureDropdownChange}
+            />
+          </>
+        ) : (
+          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
+        )}
       </Grid>
       <Grid item xs={6}>
         <h2>Patient Bundle: </h2>
@@ -90,18 +98,25 @@ export default function InputRow(props: Props) {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <FileUpload onDrop={props.onPatientUpload} /> <h4>OR Select From Connectathon Repository:</h4>
-        <DropDown
-          selectedValue={props.patientFileName || ''}
-          options={props.patientOptions}
-          handleChange={props.onPatientDropdownChange}
-        />
-        <h4>OR Select From eCQM Measure Content Repository:</h4>
-        <DropDown
-          selectedValue={props.patientFileName || ''}
-          options={props.ecqmPatientOptions}
-          handleChange={props.onECQMPatientDropdownChange}
-        />
+        <FileUpload onDrop={props.onPatientUpload} />
+        {props.showDropdowns ? (
+          <>
+            <h4>OR Select From Connectathon Repository:</h4>
+            <DropDown
+              selectedValue={props.patientFileName || ''}
+              options={props.patientOptions}
+              handleChange={props.onPatientDropdownChange}
+            />
+            <h4>OR Select From eCQM Measure Content Repository:</h4>
+            <DropDown
+              selectedValue={props.patientFileName || ''}
+              options={props.ecqmPatientOptions}
+              handleChange={props.onECQMPatientDropdownChange}
+            />
+          </>
+        ) : (
+          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
+        )}
       </Grid>
     </React.Fragment>
   );
