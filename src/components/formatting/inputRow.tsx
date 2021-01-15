@@ -4,7 +4,7 @@ import FileUpload from '../fileUpload/FileUpload';
 import DropDown from '../fileImport/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Button, createStyles, makeStyles, TextField, Theme, Typography } from '@material-ui/core';
 
 interface Props {
   onMeasureUpload: (files: any) => void;
@@ -24,12 +24,20 @@ interface Props {
   setPatientOptions: any;
   setECQMPatientOptions: any;
   showDropdowns: boolean;
+  ghUsername: string;
+  ghPassword: string;
+  onGhUsernameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onGhPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onGhButtonClick: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       color: '#3f51b5'
+    },
+    submitBtn: {
+      paddingTop: '8px'
     }
   })
 );
@@ -76,7 +84,7 @@ export default function InputRow(props: Props) {
             />
           </>
         ) : (
-          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
+          <></>
         )}
       </Grid>
       <Grid item xs={6}>
@@ -115,9 +123,35 @@ export default function InputRow(props: Props) {
             />
           </>
         ) : (
-          <Typography variant="caption">Loading bundles from Github is temporarily disabled</Typography>
+          <></>
         )}
       </Grid>
+      {!props.showDropdowns && (
+        <Grid container direction="column">
+          <Typography variant="caption">
+            Authenticate with GitHub to load bundles directly from connectathon repository
+          </Typography>
+          <Grid item xs>
+            <TextField label="GitHub Username" value={props.ghUsername} onChange={props.onGhUsernameChange} />
+          </Grid>
+          <Grid item xs>
+            <TextField
+              label="GitHub Password"
+              type="password"
+              autoComplete="current-password"
+              value={props.ghPassword}
+              onChange={props.onGhPasswordChange}
+            />
+          </Grid>
+          <Grid item xs>
+            <div className={classes.submitBtn}>
+              <Button variant="contained" color="primary" onClick={props.onGhButtonClick}>
+                Submit
+              </Button>
+            </div>
+          </Grid>
+        </Grid>
+      )}
     </React.Fragment>
   );
 }

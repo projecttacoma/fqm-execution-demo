@@ -99,7 +99,11 @@ export default function App() {
         setMeasureFileName(name);
         setMeasureBundle(data);
         return fetch(
-          `https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure/${name}/${name}-files`
+          `https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure/${name}/${name}-files`,
+          {
+            method: 'GET',
+            headers
+          }
         );
       })
       .then(response => response.json())
@@ -130,7 +134,11 @@ export default function App() {
         setMeasureFileName(name);
         setMeasureBundle(data);
         return fetch(
-          `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`
+          `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`,
+          {
+            method: 'GET',
+            headers
+          }
         );
       })
       .then(response => response.json())
@@ -184,15 +192,40 @@ export default function App() {
     includePrettyResults: false
   });
 
-  useEffect(() => {
-    fetch(`https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure`)
+  const [ghUsername, setGhUsername] = useState<string>('');
+  const [ghPassword, setGhPassword] = useState<string>('');
+  const [headers, setHeaders] = useState<Headers>(new Headers());
+
+  const onGhUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGhUsername(e.target.value);
+  };
+
+  const onGhPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGhPassword(e.target.value);
+  };
+
+  const onGhButtonClick = () => {
+    const authHeaders = new Headers();
+    authHeaders.set('Authorization', `Basic ${btoa(`${ghUsername}:${ghPassword}`)}`);
+
+    setHeaders(authHeaders);
+
+    fetch(`https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure`, {
+      method: 'GET',
+      headers: authHeaders
+    })
       .then(response => response.json())
       .then(data => {
         const names = data.map((n: { name: string }) => {
           return n.name;
         });
         setMeasureOptions(names);
-        return fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`);
+        setShowDropdowns(true);
+        console.log(authHeaders);
+        return fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`, {
+          method: 'GET',
+          headers: authHeaders
+        });
       })
       .then(response => response.json())
       .then(data => {
@@ -200,10 +233,21 @@ export default function App() {
           return n.name;
         });
         setECQMMeasureOptions(names);
+        setShowDropdowns(true);
       })
       .catch(e => {
         console.error('Error fetching from GitHub', e);
         setShowDropdowns(false);
+      });
+  };
+
+  useEffect(() => {
+    fetch(`https://api.github.com/`)
+      .then(() => {
+        setShowDropdowns(false);
+      })
+      .catch(() => {
+        setShowDropdowns(true);
       });
   }, []);
 
@@ -231,6 +275,11 @@ export default function App() {
               setPatientOptions={setPatientOptions}
               setECQMPatientOptions={setECQMPatientOptions}
               showDropdowns={showDropdowns}
+              ghUsername={ghUsername}
+              ghPassword={ghPassword}
+              onGhUsernameChange={onGhUsernameChange}
+              onGhPasswordChange={onGhPasswordChange}
+              onGhButtonClick={onGhButtonClick}
             />
           </Grid>
         </Grid>
