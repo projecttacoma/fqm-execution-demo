@@ -194,7 +194,17 @@ export default function App() {
         setMeasureOptions(names);
         return fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`);
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 403) {
+          if (response.headers.get('X-RateLimit-Reset') != null) {
+            let resetTime = new Date(parseInt(response.headers.get("X-RateLimit-Reset") as string) * 1000);
+            throw new Error(`GitHub Rate Limited until: ${resetTime}`);
+          } else {
+            throw new Error('Auth error with GitHub.')
+          }
+        }
+        return response.json()
+      })
       .then(data => {
         const names = data.map((n: { name: string }) => {
           return n.name;
