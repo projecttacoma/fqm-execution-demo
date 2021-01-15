@@ -63,6 +63,7 @@ export default function App() {
   const [ecqmMeasureOptions, setECQMMeasureOptions] = useState<string[]>([]);
   const [patientOptions, setPatientOptions] = useState<string[]>([]);
   const [ecqmPatientOptions, setECQMPatientOptions] = useState<string[]>([]);
+  const [showDropdowns, setShowDropdowns] = useState<boolean>(true);
 
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
@@ -191,17 +192,18 @@ export default function App() {
           return n.name;
         });
         setMeasureOptions(names);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`)
+        return fetch(`https://api.github.com/repos/cqframework/ecqm-content-r4/contents/bundles/measure`);
+      })
       .then(response => response.json())
       .then(data => {
         const names = data.map((n: { name: string }) => {
           return n.name;
         });
         setECQMMeasureOptions(names);
+      })
+      .catch(e => {
+        console.error('Error fetching from GitHub', e);
+        setShowDropdowns(false);
       });
   }, []);
 
@@ -228,6 +230,7 @@ export default function App() {
               ecqmPatientOptions={ecqmPatientOptions}
               setPatientOptions={setPatientOptions}
               setECQMPatientOptions={setECQMPatientOptions}
+              showDropdowns={showDropdowns}
             />
           </Grid>
         </Grid>
