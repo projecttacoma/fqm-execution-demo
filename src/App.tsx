@@ -197,13 +197,13 @@ export default function App() {
       .then(response => {
         if (response.status === 403) {
           if (response.headers.get('X-RateLimit-Reset') != null) {
-            let resetTime = new Date(parseInt(response.headers.get("X-RateLimit-Reset") as string) * 1000);
+            let resetTime = new Date(parseInt(response.headers.get('X-RateLimit-Reset') as string) * 1000);
             throw new Error(`GitHub Rate Limited until: ${resetTime}`);
           } else {
-            throw new Error('Auth error with GitHub.')
+            throw new Error('Auth error with GitHub.');
           }
         }
-        return response.json()
+        return response.json();
       })
       .then(data => {
         const names = data.map((n: { name: string }) => {
