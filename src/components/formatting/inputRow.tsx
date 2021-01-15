@@ -17,12 +17,15 @@ interface Props {
   onECQMMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onECQMPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  onFHIRPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   measureOptions: string[];
   ecqmMeasureOptions: string[];
   patientOptions: string[];
   ecqmPatientOptions: string[];
+  fhirPatientOptions: string[];
   setPatientOptions: any;
   setECQMPatientOptions: any;
+  setFHIRPatientOptions: any;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,7 +43,7 @@ export default function InputRow(props: Props) {
         <h2>Measure Bundle: </h2>
         {props.measureFileName !== null && <h3>Current Measure Bundle:</h3>}
         {props.measureFileName !== null && (
-          <Grid container>
+          <Grid>
             <h3 className={classes.root}> {props.measureFileName}</h3>
             {props.measureFileName !== null && (
               <IconButton
@@ -95,6 +98,12 @@ export default function InputRow(props: Props) {
           selectedValue={props.patientFileName || ''}
           options={props.patientOptions}
           handleChange={props.onPatientDropdownChange}
+        />
+        <h4>OR Select From FHIR Patient Generator:</h4>
+        <DropDown
+          selectedValue={props.patientFileName || ''}
+          options={props.fhirPatientOptions}
+          handleChange={props.onFHIRPatientDropdownChange}
         />
         <h4>OR Select From eCQM Measure Content Repository:</h4>
         <DropDown

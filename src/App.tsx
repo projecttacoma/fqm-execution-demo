@@ -63,6 +63,9 @@ export default function App() {
   const [ecqmMeasureOptions, setECQMMeasureOptions] = useState<string[]>([]);
   const [patientOptions, setPatientOptions] = useState<string[]>([]);
   const [ecqmPatientOptions, setECQMPatientOptions] = useState<string[]>([]);
+  const [fhirPatientOptions, setFHIRPatientOptions] = useState<string[]>([]);
+
+  const [fhirName, setFHIRName] = useState<any>();
 
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
@@ -113,7 +116,6 @@ export default function App() {
       })
       .catch(error => console.log('error: ', error));
   };
-
   const onMeasureDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     let name = event.target.value as string;
 
@@ -127,6 +129,7 @@ export default function App() {
       .then(response => response.json())
       .then(data => {
         setMeasureFileName(name);
+        setFHIRName(`${name?.slice(0, 3)}_${name?.slice(3)}`);
         setMeasureBundle(data);
         return fetch(
           `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`
@@ -142,10 +145,47 @@ export default function App() {
         });
         setPatientOptions(filteredNames);
         setECQMPatientOptions([]);
+        return fetch(
+          `https://api.github.com/repos/projecttacoma/fhir-patient-generator/contents/${name?.slice(
+            0,
+            3
+          )}_${name?.slice(3)}/patients-r4`
+        );
       })
+      .then(response => response.json())
+      .then(data => {
+        const names = data.map((n: { name: string }) => {
+          return n.name;
+        });
+        setFHIRPatientOptions(names);
+      })
+
       .catch(error => console.log('error: ', error));
   };
-
+  const onFHIRPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const patientChoice = event.target.value as string;
+    const fhirPatientFiles: any[] = [];
+    fetch(
+      `https://api.github.com/repos/projecttacoma/fhir-patient-generator/contents/${fhirName}/patients-r4/${patientChoice}`
+    )
+      .then(response => response.json())
+      .then(data => {
+        const paths = data.map((p: { path: any }) => {
+          return p.path;
+        });
+        Promise.all(
+          paths.map((path: any) =>
+            fetch(`https://raw.githubusercontent.com/projecttacoma/fhir-patient-generator/master/${path}`)
+              .then(response => response.json())
+              .then(data1 => {
+                fhirPatientFiles.push(data1);
+              })
+          )
+        );
+        setPatientBundle(fhirPatientFiles);
+        setPatientFileName(patientChoice);
+      });
+  };
   const onPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const patientName = event.target.value as string;
 
@@ -154,7 +194,7 @@ export default function App() {
     )
       .then(response => response.json())
       .then(data => {
-        setPatientBundle(data);
+        setPatientBundle([data]);
         setPatientFileName(patientName);
       });
   };
@@ -167,7 +207,7 @@ export default function App() {
     )
       .then(response => response.json())
       .then(data => {
-        setPatientBundle(data);
+        setPatientBundle([data]);
         setPatientFileName(patientName);
       });
   };
@@ -222,12 +262,15 @@ export default function App() {
               onECQMMeasureDropdownChange={onECQMMeasureDropdownChange}
               onPatientDropdownChange={onPatientDropdownChange}
               onECQMPatientDropdownChange={onECQMPatientDropdownChange}
+              onFHIRPatientDropdownChange={onFHIRPatientDropdownChange}
               measureOptions={measureOptions}
               ecqmMeasureOptions={ecqmMeasureOptions}
               patientOptions={patientOptions}
               ecqmPatientOptions={ecqmPatientOptions}
+              fhirPatientOptions={fhirPatientOptions}
               setPatientOptions={setPatientOptions}
               setECQMPatientOptions={setECQMPatientOptions}
+              setFHIRPatientOptions={setFHIRPatientOptions}
             />
           </Grid>
         </Grid>
@@ -280,9 +323,9 @@ export default function App() {
                 ...calculationOptions
               };
               if (outputType === 'rawResults') {
-                setResults(Calculator.calculateRaw(measureBundle, [patientBundle], options));
+                setResults(Calculator.calculateRaw(measureBundle, patientBundle, options));
               } else if (outputType === 'detailedResults') {
-                let detailedResultsCalculation = Calculator.calculate(measureBundle, [patientBundle], options);
+                let detailedResultsCalculation = Calculator.calculate(measureBundle, patientBundle, options);
                 setResults(detailedResultsCalculation);
                 let IDhtml = [];
                 if (detailedResultsCalculation !== null && calculationOptions.calculateHTML === true) {
@@ -300,9 +343,9 @@ export default function App() {
                   setHTMLs([]);
                 }
               } else if (outputType === 'measureReports') {
-                setResults(Calculator.calculateMeasureReports(measureBundle, [patientBundle], options));
+                setResults(Calculator.calculateMeasureReports(measureBundle, patientBundle, options));
               } else if (outputType === 'gapsInCare') {
-                setResults(Calculator.calculateGapsInCare(measureBundle, [patientBundle], options));
+                setResults(Calculator.calculateGapsInCare(measureBundle, patientBundle, options));
               }
             }}
           >
