@@ -5,7 +5,8 @@ import {
   MeasureDropdown,
   ECQMMeasureDropdown,
   PatientDropdown,
-  ECQMPatientDropdown
+  ECQMPatientDropdown,
+  FHIRPatientDropdown
 } from '../fileSelection/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -81,6 +82,8 @@ export default function InputRow() {
         <PatientFileUpload />
         <h4>OR Select From Connectathon Repository:</h4>
         <PatientDropdown />
+        <h4>OR Select From FHIR Patient Generator Repository:</h4>
+        <FHIRPatientDropdown />
         <h4>OR Select From eCQM Measure Content Repository:</h4>
         <ECQMPatientDropdown />
       </Grid>

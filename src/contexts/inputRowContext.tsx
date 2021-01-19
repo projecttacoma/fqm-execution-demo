@@ -12,16 +12,21 @@ export interface InputRowInterface {
   onECQMMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onECQMPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  onFHIRPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   measureOptions: string[];
   ecqmMeasureOptions: string[];
   patientOptions: string[];
   ecqmPatientOptions: string[];
+  fhirPatientOptions: string[];
   setPatientOptions: any;
   setECQMPatientOptions: any;
+  setFHIRPatientOptions: any;
   measureBundle: any;
   patientBundle: any;
   setMeasureBundle: Dispatch<any>;
   setPatientBundle: Dispatch<any>;
+  fhirName: any;
+  setFHIRName: any;
 }
 
 export const InputRowContext = createContext<InputRowInterface>({
@@ -35,16 +40,21 @@ export const InputRowContext = createContext<InputRowInterface>({
   onECQMMeasureDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => null,
   onPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => null,
   onECQMPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => null,
+  onFHIRPatientDropdownChange: (event: React.ChangeEvent<{ value: unknown }>) => null,
   measureOptions: [],
   ecqmMeasureOptions: [],
   patientOptions: [],
   ecqmPatientOptions: [],
+  fhirPatientOptions: [],
   setECQMPatientOptions: null,
   setPatientOptions: null,
+  setFHIRPatientOptions: null,
   measureBundle: null,
   patientBundle: null,
   setMeasureBundle: () => {},
-  setPatientBundle: () => {}
+  setPatientBundle: () => {},
+  fhirName: null,
+  setFHIRName: null
 });
 
 const InputRowProvider = ({ children }: { children: any }) => {
@@ -56,6 +66,9 @@ const InputRowProvider = ({ children }: { children: any }) => {
   const [ecqmMeasureOptions, setECQMMeasureOptions] = useState<string[]>([]);
   const [patientOptions, setPatientOptions] = useState<string[]>([]);
   const [ecqmPatientOptions, setECQMPatientOptions] = useState<string[]>([]);
+  const [fhirPatientOptions, setFHIRPatientOptions] = useState<string[]>([]);
+  const [fhirName, setFHIRName] = useState<any>();
+
   const onMeasureUpload = useCallback(files => {
     const measureBundleFile = files[0];
     const reader = new FileReader();
@@ -70,7 +83,7 @@ const InputRowProvider = ({ children }: { children: any }) => {
     const reader = new FileReader();
     reader.onload = () => {
       setPatientFileName(patientBundleFile.path);
-      setPatientBundle(JSON.parse(reader.result as string));
+      setPatientBundle([JSON.parse(reader.result as string)]);
     };
     reader.readAsText(patientBundleFile);
   }, []);
@@ -88,7 +101,7 @@ const InputRowProvider = ({ children }: { children: any }) => {
       .then(response => response.json())
       .then(data => {
         setMeasureFileName(name);
-
+        setFHIRName(`${name?.slice(0, 3)}_${name?.slice(3)}`);
         setMeasureBundle(data);
         return fetch(
           `https://api.github.com/repos/dbcg/connectathon/contents/fhir401/bundles/measure/${name}/${name}-files`
@@ -103,6 +116,20 @@ const InputRowProvider = ({ children }: { children: any }) => {
           return name.startsWith('tests');
         });
         setPatientOptions(filteredNames);
+        setECQMPatientOptions([]);
+        return fetch(
+          `https://api.github.com/repos/projecttacoma/fhir-patient-generator/contents/${name?.slice(
+            0,
+            3
+          )}_${name?.slice(3)}/patients-r4`
+        );
+      })
+      .then(response => response.json())
+      .then(data => {
+        const names = data.map((n: { name: string }) => {
+          return n.name;
+        });
+        setFHIRPatientOptions(names);
       })
       .catch(error => console.log('error: ', error));
   };
@@ -143,11 +170,10 @@ const InputRowProvider = ({ children }: { children: any }) => {
     )
       .then(response => response.json())
       .then(data => {
-        setPatientBundle(data);
+        setPatientBundle([data]);
         setPatientFileName(patientName);
       });
   };
-
   const onECQMPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const patientName = event.target.value as string;
 
@@ -158,6 +184,30 @@ const InputRowProvider = ({ children }: { children: any }) => {
       .then(data => {
         setPatientBundle(data);
         setPatientFileName(patientName);
+      });
+  };
+  const onFHIRPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const patientChoice = event.target.value as string;
+    const fhirPatientFiles: any[] = [];
+    fetch(
+      `https://api.github.com/repos/projecttacoma/fhir-patient-generator/contents/${fhirName}/patients-r4/${patientChoice}`
+    )
+      .then(response => response.json())
+      .then(data => {
+        const paths = data.map((p: { path: any }) => {
+          return p.path;
+        });
+        Promise.all(
+          paths.map((path: any) =>
+            fetch(`https://raw.githubusercontent.com/projecttacoma/fhir-patient-generator/master/${path}`)
+              .then(response => response.json())
+              .then(data1 => {
+                fhirPatientFiles.push(data1);
+              })
+          )
+        );
+        setPatientBundle(fhirPatientFiles);
+        setPatientFileName(patientChoice);
       });
   };
 
@@ -205,16 +255,21 @@ const InputRowProvider = ({ children }: { children: any }) => {
         onECQMMeasureDropdownChange,
         onPatientDropdownChange,
         onECQMPatientDropdownChange,
+        onFHIRPatientDropdownChange,
         measureOptions,
         ecqmMeasureOptions,
         patientOptions,
         ecqmPatientOptions,
+        fhirPatientOptions,
         setECQMPatientOptions,
         setPatientOptions,
+        setFHIRPatientOptions,
         measureBundle,
         patientBundle,
         setMeasureBundle,
-        setPatientBundle
+        setPatientBundle,
+        fhirName,
+        setFHIRName
       }}
     >
       {children}
