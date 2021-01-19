@@ -81,3 +81,20 @@ export function ECQMPatientDropdown() {
     </div>
   );
 }
+export function FHIRPatientDropdown() {
+  const classes = useStyles();
+  const { patientFileName, onFHIRPatientDropdownChange, fhirPatientOptions } = useContext(InputRowContext);
+  return (
+    <div style={{ width: '100%' }}>
+      <FormControl className={classes.root}>
+        <Select value={patientFileName || ''} onChange={onFHIRPatientDropdownChange}>
+          {fhirPatientOptions.map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}

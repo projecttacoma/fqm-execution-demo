@@ -121,9 +121,9 @@ export default function App() {
                 ...calculationOptions
               };
               if (outputType === 'rawResults') {
-                setResults(Calculator.calculateRaw(measureBundle, [patientBundle], options));
+                setResults(Calculator.calculateRaw(measureBundle, patientBundle, options));
               } else if (outputType === 'detailedResults') {
-                let detailedResultsCalculation = Calculator.calculate(measureBundle, [patientBundle], options);
+                let detailedResultsCalculation = Calculator.calculate(measureBundle, patientBundle, options);
                 setResults(detailedResultsCalculation);
                 let IDhtml = [];
                 if (detailedResultsCalculation !== null && calculationOptions.calculateHTML === true) {
@@ -154,7 +154,7 @@ export default function App() {
 
                 setResults(mrResults);
               } else if (outputType === 'gapsInCare') {
-                setResults(Calculator.calculateGapsInCare(measureBundle, [patientBundle], options));
+                setResults(Calculator.calculateGapsInCare(measureBundle, patientBundle, options));
               }
             }}
           >
