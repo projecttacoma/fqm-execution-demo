@@ -1,7 +1,12 @@
 import React, { useContext } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { MeasureFileUpload, PatientFileUpload } from '../fileSelection/fileUpload';
-import { MeasureDropdown, PatientDropdown } from '../fileSelection/fileImport';
+import {
+  MeasureDropdown,
+  ECQMMeasureDropdown,
+  PatientDropdown,
+  ECQMPatientDropdown
+} from '../fileSelection/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
@@ -16,9 +21,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 export default function InputRow() {
   const classes = useStyles();
-  const { measureFileName, patientFileName, setPatientFileName, setMeasureFileName, setPatientOptions } = useContext(
-    InputRowContext
-  );
+  const {
+    measureFileName,
+    patientFileName,
+    setPatientFileName,
+    setMeasureFileName,
+    setPatientOptions,
+    setECQMPatientOptions
+  } = useContext(InputRowContext);
   return (
     <React.Fragment>
       <Grid item xs={6}>
@@ -33,6 +43,7 @@ export default function InputRow() {
                 onClick={() => {
                   setMeasureFileName(null);
                   setPatientOptions([]);
+                  setECQMPatientOptions([]);
                   setPatientFileName(null);
                 }}
               >
@@ -42,8 +53,11 @@ export default function InputRow() {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <MeasureFileUpload /> <h4>OR Select From Connectathon Repository:</h4>
+        <MeasureFileUpload />
+        <h4>OR Select From Connectathon Repository:</h4>
         <MeasureDropdown />
+        <h4>OR Select From eCQM Measure Content Repository:</h4>
+        <ECQMMeasureDropdown />
       </Grid>
       <Grid item xs={6}>
         <h2>Patient Bundle: </h2>
@@ -64,8 +78,11 @@ export default function InputRow() {
           </Grid>
         )}
         <h4>Upload From File System:</h4>
-        <PatientFileUpload /> <h4>OR Select From Connectathon Repository:</h4>
+        <PatientFileUpload />
+        <h4>OR Select From Connectathon Repository:</h4>
         <PatientDropdown />
+        <h4>OR Select From eCQM Measure Content Repository:</h4>
+        <ECQMPatientDropdown />
       </Grid>
     </React.Fragment>
   );

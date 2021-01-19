@@ -30,6 +30,23 @@ export function MeasureDropdown() {
     </div>
   );
 }
+export function ECQMMeasureDropdown() {
+  const classes = useStyles();
+  const { measureFileName, onECQMMeasureDropdownChange, ecqmMeasureOptions } = useContext(InputRowContext);
+  return (
+    <div style={{ width: '100%' }}>
+      <FormControl className={classes.root}>
+        <Select value={measureFileName || ''} onChange={onECQMMeasureDropdownChange}>
+          {ecqmMeasureOptions.map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}
 export function PatientDropdown() {
   const classes = useStyles();
   const { patientFileName, onPatientDropdownChange, patientOptions } = useContext(InputRowContext);
@@ -38,6 +55,23 @@ export function PatientDropdown() {
       <FormControl className={classes.root}>
         <Select value={patientFileName || ''} onChange={onPatientDropdownChange}>
           {patientOptions.map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}
+export function ECQMPatientDropdown() {
+  const classes = useStyles();
+  const { patientFileName, onECQMPatientDropdownChange, ecqmPatientOptions } = useContext(InputRowContext);
+  return (
+    <div style={{ width: '100%' }}>
+      <FormControl className={classes.root}>
+        <Select value={patientFileName || ''} onChange={onECQMPatientDropdownChange}>
+          {ecqmPatientOptions.map(option => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
