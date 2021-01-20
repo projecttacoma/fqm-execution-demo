@@ -10,7 +10,7 @@ import {
 } from '../fileSelection/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { InputRowContext } from '../../contexts/inputRowContext';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
 export default function InputRow() {
   const classes = useStyles();
   const {
