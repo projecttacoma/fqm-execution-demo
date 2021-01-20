@@ -127,7 +127,7 @@ const InputRowProvider = ({ children }: { children: any }) => {
       .then(response => response.json())
       .then(data => {
         const names = data.map((n: { name: string }) => {
-          return n.name === 'denominator' || n.name === 'numerator' || n.name === 'ipod' || n.name === 'none'
+          return n.name === 'denominator' || n.name === 'numerator' || n.name === 'ipop' || n.name === 'none'
             ? n.name
             : null;
         });
