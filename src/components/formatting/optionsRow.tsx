@@ -1,45 +1,25 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { RadioButtonsGroup } from '../inputs/radioButtons';
 import { CheckboxesGroup } from '../inputs/checkboxes';
-import { MeasurementDatePicker } from '../inputs/datePicker';
-import { CalculatorTypes } from 'fqm-execution';
+import { MeasurementDateStart, MeasurementDateEnd } from '../inputs/datePicker';
 
-interface Props {
-  setOutputType: Dispatch<SetStateAction<string>>;
-  outputType: string;
-  setMeasurementPeriodStart: Dispatch<SetStateAction<Date | null>>;
-  measurementPeriodStart: Date | null;
-  setMeasurementPeriodEnd: Dispatch<SetStateAction<Date | null>>;
-  measurementPeriodEnd: Date | null;
-  setCalculationOptions: Dispatch<SetStateAction<CalculatorTypes.CalculationOptions>>;
-  calculationOptions: CalculatorTypes.CalculationOptions;
-}
-export default function OptionsRow(props: Props) {
+export default function OptionsRow() {
   return (
     <React.Fragment>
       <Grid item xs={4}>
         <h3>Output Type:</h3>
-        <RadioButtonsGroup setOutputType={props.setOutputType} outputType={props.outputType} />
+        <RadioButtonsGroup />
       </Grid>
       <Grid item xs={4}>
         <h3>Calculation Options:</h3>
-        <CheckboxesGroup
-          setCalculationOptions={props.setCalculationOptions}
-          calculationOptions={props.calculationOptions}
-        />
+        <CheckboxesGroup />
       </Grid>
       <Grid item xs={4}>
         <h3>Measurement Start: </h3>
-        <MeasurementDatePicker
-          setMeasurementPeriodDate={props.setMeasurementPeriodStart}
-          measurementPeriodDate={props.measurementPeriodStart}
-        />
+        <MeasurementDateStart />
         <h3>Measurement End: </h3>
-        <MeasurementDatePicker
-          setMeasurementPeriodDate={props.setMeasurementPeriodEnd}
-          measurementPeriodDate={props.measurementPeriodEnd}
-        />
+        <MeasurementDateEnd />
       </Grid>
     </React.Fragment>
   );

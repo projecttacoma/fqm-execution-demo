@@ -1,7 +1,8 @@
 import { Grid } from '@material-ui/core';
-import React from 'react';
-import { DropEvent, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone';
+import React, { useContext } from 'react';
+import { DropzoneRootProps, useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
+import { InputRowContext } from '../../contexts/inputRowContext';
 
 const getColor = (props: DropzoneRootProps) => {
   if (props.isDragAccept) {
@@ -32,11 +33,9 @@ const Container = styled.div`
   transition: border 0.24s ease-in-out;
 `;
 
-interface Props {
-  onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void;
-}
+export const MeasureFileUpload = () => {
+  const onDrop = useContext(InputRowContext).onMeasureUpload;
 
-const FileUpload = ({ onDrop }: Props) => {
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     accept: '.json'
@@ -52,4 +51,20 @@ const FileUpload = ({ onDrop }: Props) => {
   );
 };
 
-export default FileUpload;
+export const PatientFileUpload = () => {
+  const onDrop = useContext(InputRowContext).onPatientUpload;
+
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
+    onDrop,
+    accept: '.json'
+  });
+
+  return (
+    <Grid item xs={12}>
+      <Container {...getRootProps({ className: 'dropzone', isDragActive, isDragAccept, isDragReject })}>
+        <input {...getInputProps()} />
+        <p>Drag and drop file here, or click to select file</p>
+      </Container>
+    </Grid>
+  );
+};

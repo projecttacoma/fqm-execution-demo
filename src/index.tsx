@@ -3,10 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import OptionsRowProvider from './contexts/optionsRowContext';
+import InputRowProvider from './contexts/inputRowContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <OptionsRowProvider>
+      <InputRowProvider>
+        <App />
+      </InputRowProvider>
+    </OptionsRowProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
