@@ -141,7 +141,7 @@ export default function App() {
                   setHTMLs([]);
                 }
               } else if (outputType === 'measureReports') {
-                const mrResults = Calculator.calculateMeasureReports(measureBundle, [patientBundle], options);
+                const mrResults = Calculator.calculateMeasureReports(measureBundle, patientBundle, options);
                 const mrs = mrResults.results;
 
                 if (options.calculateHTML) {
