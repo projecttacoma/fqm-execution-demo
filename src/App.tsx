@@ -120,7 +120,6 @@ export default function App() {
                 measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
                 ...calculationOptions
               };
-
               if (outputType === 'rawResults') {
                 setResults(Calculator.calculateRaw(measureBundle, patientBundle, options));
               } else if (outputType === 'detailedResults') {
@@ -142,7 +141,18 @@ export default function App() {
                   setHTMLs([]);
                 }
               } else if (outputType === 'measureReports') {
-                setResults(Calculator.calculateMeasureReports(measureBundle, patientBundle, options));
+                const mrResults = Calculator.calculateMeasureReports(measureBundle, patientBundle, options);
+                const mrs = mrResults.results;
+
+                if (options.calculateHTML) {
+                  const htmls: HTML[] = mrs.map(m => ({
+                    groupId: m.id || '',
+                    html: m.text?.div || ''
+                  }));
+                  setHTMLs(htmls);
+                }
+
+                setResults(mrResults);
               } else if (outputType === 'gapsInCare') {
                 setResults(Calculator.calculateGapsInCare(measureBundle, patientBundle, options));
               }
