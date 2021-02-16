@@ -101,9 +101,6 @@ export default function App() {
               setCalculationOptions({
                 calculateHTML: false,
                 calculateSDEs: false,
-                includeClauseResults: false,
-                includeHighlighting: false,
-                includePrettyResults: false
               });
               setResults(null);
               setHTMLs([]);
