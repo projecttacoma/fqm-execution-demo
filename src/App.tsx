@@ -100,7 +100,7 @@ export default function App() {
               setMeasurementPeriodEnd(new Date('12/31/2019'));
               setCalculationOptions({
                 calculateHTML: false,
-                calculateSDEs: false,
+                calculateSDEs: false
               });
               setResults(null);
               setHTMLs([]);
