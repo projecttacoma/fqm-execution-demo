@@ -18,39 +18,6 @@ function CheckboxesGroup() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={OptionsRowInfo.calculationOptions.includeClauseResults}
-            onChange={handleChange}
-            name="includeClauseResults"
-            color="primary"
-          />
-        }
-        label="Include Clause Results"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={OptionsRowInfo.calculationOptions.includePrettyResults}
-            onChange={handleChange}
-            name="includePrettyResults"
-            color="primary"
-          />
-        }
-        label="Include Pretty Results"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={OptionsRowInfo.calculationOptions.includeHighlighting}
-            onChange={handleChange}
-            name="includeHighlighting"
-            color="primary"
-          />
-        }
-        label="Include Highlighting"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
             checked={OptionsRowInfo.calculationOptions.calculateSDEs}
             onChange={handleChange}
             name="calculateSDEs"

@@ -21,10 +21,7 @@ export const OptionsRowContext = createContext<OptionsRowInterface>({
   setMeasurementPeriodEnd: () => {},
   calculationOptions: {
     calculateHTML: false,
-    calculateSDEs: false,
-    includeClauseResults: false,
-    includeHighlighting: false,
-    includePrettyResults: false
+    calculateSDEs: false
   },
   setCalculationOptions: () => {}
 });
@@ -35,10 +32,7 @@ const OptionsRowProvider = ({ children }: { children: any }) => {
   const [measurementPeriodEnd, setMeasurementPeriodEnd] = useState<Date | null>(new Date('12/31/2019'));
   const [calculationOptions, setCalculationOptions] = useState<CalculatorTypes.CalculationOptions>({
     calculateHTML: false,
-    calculateSDEs: false,
-    includeClauseResults: false,
-    includeHighlighting: false,
-    includePrettyResults: false
+    calculateSDEs: false
   });
 
   return (
