@@ -18,8 +18,9 @@ function CheckboxesGroup() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={OptionsRowInfo.calculationOptions.calculateSDEs}
+            checked={OptionsRowInfo.outputType !== 'rawResults' && OptionsRowInfo.calculationOptions.calculateSDEs}
             onChange={handleChange}
+            disabled={OptionsRowInfo.outputType === 'rawResults'}
             name="calculateSDEs"
             color="primary"
           />
@@ -29,8 +30,9 @@ function CheckboxesGroup() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={OptionsRowInfo.calculationOptions.calculateHTML}
+            checked={OptionsRowInfo.outputType !== 'rawResults' && OptionsRowInfo.calculationOptions.calculateHTML}
             onChange={handleChange}
+            disabled={OptionsRowInfo.outputType === 'rawResults'}
             name="calculateHTML"
             color="primary"
           />
