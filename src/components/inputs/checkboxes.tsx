@@ -20,6 +20,7 @@ function CheckboxesGroup() {
           <Checkbox
             checked={OptionsRowInfo.calculationOptions.calculateSDEs}
             onChange={handleChange}
+            disabled={OptionsRowInfo.outputType === 'rawResults'}
             name="calculateSDEs"
             color="primary"
           />
@@ -31,6 +32,7 @@ function CheckboxesGroup() {
           <Checkbox
             checked={OptionsRowInfo.calculationOptions.calculateHTML}
             onChange={handleChange}
+            disabled={OptionsRowInfo.outputType === 'rawResults'}
             name="calculateHTML"
             color="primary"
           />
