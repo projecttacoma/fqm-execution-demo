@@ -4,7 +4,7 @@ This is a React app that demonstrates the capabilities of the [fqm-execution](ht
 
 ## Hosted Version
 
-This app is hosted on GitHub Pages, at [https://projecttacoma.github.io/fqm-execution-demo/](https://projecttacoma.github.io/fqm-execution-demo/), for use without standing up a local development environment.
+This app is hosted on GitHub Pages, at [https://projecttacoma.github.io/fqm-execution-demo/](https://projecttacoma.github.io/fqm-execution-demo/), for demonstration use without standing up a local development environment.
 
 ## Options/fields
 
@@ -13,17 +13,17 @@ This app is hosted on GitHub Pages, at [https://projecttacoma.github.io/fqm-exec
 In order to run calculation, the demo app requires a `Bundle` resource that includes the `Measure` resource, all required `Library` resources, and all required `ValueSet` resources. Users can provide measure bundles in three different ways:
 
 * By uploading a measure bundle from their local computer, by clicking on the box below `Upload From File System` or dragging a bundle from their file browser to that box.
-* By selecting a measure bundle from the `Select from Connectathon Repository` dropdown list, which is populated with the measure bundles from the [DBCG/connectathon](https://github.com/dbcg/connectathon) repository.
-* By selecting a measure bundle from the `Select from eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository.
+* By selecting a measure bundle from the `Select From Connectathon Repository` dropdown list, which is populated with the measure bundles from the [DBCG/connectathon](https://github.com/dbcg/connectathon) repository.
+* By selecting a measure bundle from the `Select From eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository.
 
 ### Patient Bundle
 
 In order to run calculation, the demo app requires a `Bundle` resource that includes the `Patient` resource, and all other required clinical resources (`Procedure`s, `Encounter`s, etc.). Users can provide patient bundles in four different ways:
 
 * By uploading a patient bundle from their local computer, by clicking on the box below `Upload From File System` or dragging a bundle from their file browser to that box.
-* By selecting a patient bundle from the `Select from Connectathon Repository` dropdown list, which is populated from the [DBCG/connectathon](https://github.com/dbcg/connectathon) repository if a matching measure is selected in the `Measure Bundle` field.
-* By selecting a patient bundle from the `Select from eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository if a matching measure is selected in the `Measure Bundle` field.
-* By selecting a patient bundle from the `Select from FHIR Patient Generator Repository` dropdown list, which is populated from the [projecttacoma/fhir-patient-generator] repository if a matching measure is selected in the `Measure Bundle` field.
+* By selecting a patient bundle from the `Select From Connectathon Repository` dropdown list, which is populated from the [DBCG/connectathon](https://github.com/dbcg/connectathon) repository if a matching measure is selected in the `Measure Bundle` field.
+* By selecting a patient bundle from the `Select From eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository if a matching measure is selected in the `Measure Bundle` field.
+* By selecting a patient bundle from the `Select From FHIR Patient Generator Repository` dropdown list, which is populated from the [projecttacoma/fhir-patient-generator] repository if a matching measure is selected in the `Measure Bundle` field.
 
 ### Output type
 
