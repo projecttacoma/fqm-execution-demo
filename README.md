@@ -22,8 +22,8 @@ In order to run calculation, the demo app requires a `Bundle` resource that incl
 
 * By uploading a patient bundle from their local computer, by clicking on the box below `Upload From File System` or dragging a bundle from their file browser to that box.
 * By selecting a patient bundle from the `Select From Connectathon Repository` dropdown list, which is populated from the [DBCG/connectathon](https://github.com/dbcg/connectathon) repository if a matching measure is selected in the `Measure Bundle` field.
-* By selecting a patient bundle from the `Select From eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository if a matching measure is selected in the `Measure Bundle` field.
 * By selecting a patient bundle from the `Select From FHIR Patient Generator Repository` dropdown list, which is populated from the [projecttacoma/fhir-patient-generator] repository if a matching measure is selected in the `Measure Bundle` field.
+* By selecting a patient bundle from the `Select From eCQM Measure Content Repository` dropdown, which is populated from the [cqframework/ecqm-content-r4](https://github.com/cqframework/ecqm-content-r4) repository if a matching measure is selected in the `Measure Bundle` field.
 
 ### Output type
 
