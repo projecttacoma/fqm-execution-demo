@@ -6,9 +6,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
-import ReactJson from 'react-json-view';
-import parse from 'html-react-parser';
-import fileDownload from 'js-file-download';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -18,8 +15,7 @@ import {
   outputTypeState,
   patientFileState
 } from './state';
-import { IconButton } from '@material-ui/core';
-import { GetApp } from '@material-ui/icons';
+import Results from './components/Results';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,18 +39,13 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       display: 'flex-grow'
     },
-    highlightedMarkup: {
-      '& pre': {
-        whiteSpace: 'pre-wrap'
-      }
-    },
     buttons: {
       margin: '4px'
     }
   })
 );
 
-interface HTML {
+export interface HTML {
   groupId: string;
   html: string;
 }
@@ -191,39 +182,7 @@ export default function App() {
             Calculate
           </Button>
         </Grid>
-        <Grid container>
-          <Grid container item xs={6} direction="column">
-            <Grid container direction="row">
-              <h2>Results:</h2>
-              {results && (
-                <IconButton
-                  onClick={() => {
-                    fileDownload(
-                      JSON.stringify(results),
-                      measureFile.name?.includes('.json')
-                        ? `results-${measureFile.name}`
-                        : `results-${measureFile.name}.json`
-                    );
-                  }}
-                >
-                  <GetApp fontSize="small" />
-                </IconButton>
-              )}
-            </Grid>
-            {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
-          </Grid>
-          <Grid container item xs={6}>
-            {htmls &&
-              htmls.map(html => {
-                return (
-                  <div key={html.groupId} className={classes.highlightedMarkup}>
-                    <h2>HTML:</h2>
-                    {parse(html.html)}
-                  </div>
-                );
-              })}
-          </Grid>
-        </Grid>
+        <Results results={results} measureFile={measureFile} htmls={htmls} />
       </Grid>
     </div>
   );

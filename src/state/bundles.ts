@@ -1,7 +1,7 @@
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { atom } from 'recoil';
 
-interface FileUploadState {
+export interface FileUploadState {
   name: string | null;
   content: R4.IBundle | null;
   fromFileUpload?: boolean;
