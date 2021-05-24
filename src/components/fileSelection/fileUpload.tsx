@@ -1,8 +1,10 @@
+import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Grid } from '@material-ui/core';
-import React, { useContext } from 'react';
+import React, { useCallback } from 'react';
 import { DropzoneRootProps, useDropzone } from 'react-dropzone';
+import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { InputRowContext } from '../../contexts/inputRowContext';
+import { measureFileState, patientFileState } from '../../state';
 
 const getColor = (props: DropzoneRootProps) => {
   if (props.isDragAccept) {
@@ -34,10 +36,26 @@ const Container = styled.div`
 `;
 
 export const MeasureFileUpload = () => {
-  const onDrop = useContext(InputRowContext).onMeasureUpload;
+  const setMeasureFileState = useSetRecoilState(measureFileState);
+
+  const onMeasureUpload = useCallback(
+    files => {
+      const measureBundleFile = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        setMeasureFileState({
+          name: measureBundleFile.path,
+          content: JSON.parse(reader.result as string) as R4.IBundle,
+          fromFileUpload: true
+        });
+      };
+      reader.readAsText(measureBundleFile);
+    },
+    [setMeasureFileState]
+  );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    onDrop,
+    onDrop: onMeasureUpload,
     accept: '.json'
   });
 
@@ -52,10 +70,26 @@ export const MeasureFileUpload = () => {
 };
 
 export const PatientFileUpload = () => {
-  const onDrop = useContext(InputRowContext).onPatientUpload;
+  const setPatientFileState = useSetRecoilState(patientFileState);
+
+  const onPatientUpload = useCallback(
+    files => {
+      const patientBundleFile = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPatientFileState({
+          name: patientBundleFile.path,
+          content: JSON.parse(reader.result as string) as R4.IBundle,
+          fromFileUpload: true
+        });
+      };
+      reader.readAsText(patientBundleFile);
+    },
+    [setPatientFileState]
+  );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    onDrop,
+    onDrop: onPatientUpload,
     accept: '.json'
   });
 

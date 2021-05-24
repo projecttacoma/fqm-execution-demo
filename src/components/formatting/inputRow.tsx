@@ -1,17 +1,13 @@
-import React, { useContext } from 'react';
+import React, { Suspense } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { MeasureFileUpload, PatientFileUpload } from '../fileSelection/fileUpload';
-import {
-  MeasureDropdown,
-  ECQMMeasureDropdown,
-  PatientDropdown,
-  ECQMPatientDropdown,
-  FHIRPatientDropdown
-} from '../fileSelection/fileImport';
+import { MeasureDropdown, PatientDropdown } from '../fileSelection/fileImport';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { InputRowContext } from '../../contexts/inputRowContext';
+import { useRecoilState } from 'recoil';
+import { measureFileState, patientFileState } from '../../state';
+import Loading from '../Loading';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,72 +16,76 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
 export default function InputRow() {
   const classes = useStyles();
-  const {
-    measureFileName,
-    patientFileName,
-    setPatientFileName,
-    setMeasureFileName,
-    setPatientOptions,
-    setECQMPatientOptions
-  } = useContext(InputRowContext);
+
+  const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
+  const [patientFile, setPatientFile] = useRecoilState(patientFileState);
+
   return (
     <React.Fragment>
       <Grid item xs={6}>
         <h2>Measure Bundle: </h2>
-        {measureFileName !== null && <h3>Current Measure Bundle:</h3>}
-        {measureFileName !== null && (
-          <Grid container>
-            <h3 className={classes.root}> {measureFileName}</h3>{' '}
-            {measureFileName !== null && (
+        <Grid container>
+          {measureFile.name !== null ? (
+            <>
+              <h3 className={classes.root}> {measureFile.name}</h3>
               <IconButton
                 aria-label="delete"
                 onClick={() => {
-                  setMeasureFileName(null);
-                  setPatientOptions([]);
-                  setECQMPatientOptions([]);
-                  setPatientFileName(null);
+                  setMeasureFile({
+                    name: null,
+                    content: null
+                  });
+                  setPatientFile({
+                    name: null,
+                    content: null
+                  });
                 }}
               >
-                <DeleteIcon />
+                <DeleteIcon fontSize="small" />
               </IconButton>
-            )}
-          </Grid>
-        )}
+            </>
+          ) : (
+            <h3 className={classes.root}>None Selected</h3>
+          )}
+        </Grid>
         <h4>Upload From File System:</h4>
         <MeasureFileUpload />
         <h4>OR Select From Connectathon Repository:</h4>
-        <MeasureDropdown />
-        <h4>OR Select From eCQM Measure Content Repository:</h4>
-        <ECQMMeasureDropdown />
+        <Suspense fallback={<Loading />}>
+          <MeasureDropdown />
+        </Suspense>
       </Grid>
       <Grid item xs={6}>
         <h2>Patient Bundle: </h2>
-        {patientFileName !== null && <h3>Current Patient Bundle:</h3>}
-        {patientFileName !== null && (
-          <Grid container>
-            <h3 className={classes.root}> {patientFileName}</h3>{' '}
-            {patientFileName !== null && (
+        <Grid container>
+          {patientFile.name !== null ? (
+            <>
+              <h3 className={classes.root}>{patientFile.name}</h3>
               <IconButton
                 aria-label="delete"
                 onClick={() => {
-                  setPatientFileName(null);
+                  setPatientFile({
+                    name: null,
+                    content: null
+                  });
                 }}
               >
-                <DeleteIcon />
+                <DeleteIcon fontSize="small" />
               </IconButton>
-            )}
-          </Grid>
-        )}
+            </>
+          ) : (
+            <h3 className={classes.root}>None Selected</h3>
+          )}
+        </Grid>
         <h4>Upload From File System:</h4>
         <PatientFileUpload />
         <h4>OR Select From Connectathon Repository:</h4>
-        <PatientDropdown />
-        <h4>OR Select From FHIR Patient Generator Repository:</h4>
-        <FHIRPatientDropdown />
-        <h4>OR Select From eCQM Measure Content Repository:</h4>
-        <ECQMPatientDropdown />
+        <Suspense fallback={<Loading />}>
+          <PatientDropdown />
+        </Suspense>
       </Grid>
     </React.Fragment>
   );

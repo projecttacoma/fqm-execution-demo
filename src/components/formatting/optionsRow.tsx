@@ -1,8 +1,8 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { RadioButtonsGroup } from '../inputs/radioButtons';
+import RadioButtonsGroup from '../inputs/radioButtons';
 import { CheckboxesGroup } from '../inputs/checkboxes';
-import { MeasurementDateStart, MeasurementDateEnd } from '../inputs/datePicker';
+import MeasurementPeriodDatePicker from '../inputs/datePicker';
 
 export default function OptionsRow() {
   return (
@@ -16,10 +16,7 @@ export default function OptionsRow() {
         <CheckboxesGroup />
       </Grid>
       <Grid item xs={4}>
-        <h3>Measurement Start: </h3>
-        <MeasurementDateStart />
-        <h3>Measurement End: </h3>
-        <MeasurementDateEnd />
+        <MeasurementPeriodDatePicker />
       </Grid>
     </React.Fragment>
   );

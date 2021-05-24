@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { OptionsRowContext } from '../../contexts/optionsRowContext';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { calculationOptionsState, outputTypeState } from '../../state';
 
 function CheckboxesGroup() {
-  const OptionsRowInfo = useContext(OptionsRowContext);
+  const outputType = useRecoilValue(outputTypeState);
+  const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    OptionsRowInfo.setCalculationOptions({
-      ...OptionsRowInfo.calculationOptions,
+    setCalculationOptions({
+      ...calculationOptions,
       [event.target.name]: event.target.checked
     });
   };
@@ -18,9 +21,9 @@ function CheckboxesGroup() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={OptionsRowInfo.outputType !== 'rawResults' && OptionsRowInfo.calculationOptions.calculateSDEs}
+            checked={outputType !== 'rawResults' && calculationOptions.calculateSDEs}
             onChange={handleChange}
-            disabled={OptionsRowInfo.outputType === 'rawResults'}
+            disabled={outputType === 'rawResults'}
             name="calculateSDEs"
             color="primary"
           />
@@ -30,9 +33,9 @@ function CheckboxesGroup() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={OptionsRowInfo.outputType !== 'rawResults' && OptionsRowInfo.calculationOptions.calculateHTML}
+            checked={outputType !== 'rawResults' && calculationOptions.calculateHTML}
             onChange={handleChange}
-            disabled={OptionsRowInfo.outputType === 'rawResults'}
+            disabled={outputType === 'rawResults'}
             name="calculateHTML"
             color="primary"
           />
