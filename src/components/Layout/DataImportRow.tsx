@@ -1,13 +1,13 @@
 import React, { Suspense } from 'react';
 import Grid from '@material-ui/core/Grid';
-import { MeasureFileUpload, PatientFileUpload } from '../fileSelection/fileUpload';
-import { MeasureDropdown, PatientDropdown } from '../fileSelection/fileImport';
+import { MeasureFileUpload, PatientFileUpload } from '../FileUpload';
+import { MeasureDropdown, PatientDropdown } from '../Dropdowns';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { useRecoilState } from 'recoil';
 import { measureFileState, patientFileState } from '../../state';
-import Loading from '../Loading';
+import { Loading } from '../Utils';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function InputRow() {
+export default function DataImportRow() {
   const classes = useStyles();
 
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);

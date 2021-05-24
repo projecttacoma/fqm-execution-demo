@@ -1,5 +1,5 @@
 import React from 'react';
-import DateFnsUtils from '@date-io/date-fns'; // choose your lib
+import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { useRecoilState } from 'recoil';
 import { measurementPeriodState } from '../../state';

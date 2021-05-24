@@ -6,7 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { useRecoilState } from 'recoil';
 import { outputTypeState } from '../../state';
 
-function RadioButtonsGroup() {
+function OutputTypeButtons() {
   const [outputType, setOutputType] = useRecoilState(outputTypeState);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,4 +26,4 @@ function RadioButtonsGroup() {
   );
 }
 
-export default RadioButtonsGroup;
+export default OutputTypeButtons;

@@ -5,7 +5,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { calculationOptionsState, outputTypeState } from '../../state';
 
-function CheckboxesGroup() {
+function CalculationOptionsButtons() {
   const outputType = useRecoilValue(outputTypeState);
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
 
@@ -46,4 +46,4 @@ function CheckboxesGroup() {
   );
 }
 
-export { CheckboxesGroup };
+export default CalculationOptionsButtons;

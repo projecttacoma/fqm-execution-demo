@@ -3,8 +3,7 @@ import 'date-fns';
 import './index.css';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import OptionsRow from './components/formatting/optionsRow';
-import InputRow from './components/formatting/inputRow';
+import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import ReactJson from 'react-json-view';
@@ -170,7 +169,7 @@ export default function App() {
         <h1 id="header">FQM Execution Demo</h1>
         <Grid container justify="space-evenly">
           <Grid container item xs={11} spacing={2}>
-            <InputRow />
+            <DataImportRow />
           </Grid>
         </Grid>
         <Grid container spacing={1} justify="space-evenly">
