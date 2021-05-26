@@ -11,8 +11,8 @@ import { Loading } from '../Utils';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      color: '#3f51b5'
+    fileName: {
+      color: '#009688'
     }
   })
 );
@@ -30,7 +30,7 @@ export default function DataImportRow() {
         <Grid container>
           {measureFile.name !== null ? (
             <>
-              <h3 className={classes.root}> {measureFile.name}</h3>
+              <h3 className={classes.fileName}> {measureFile.name}</h3>
               <IconButton
                 aria-label="delete"
                 onClick={() => {
@@ -48,7 +48,7 @@ export default function DataImportRow() {
               </IconButton>
             </>
           ) : (
-            <h3 className={classes.root}>None Selected</h3>
+            <h3 className={classes.fileName}>None Selected</h3>
           )}
         </Grid>
         <h4>Upload From File System:</h4>
@@ -63,7 +63,7 @@ export default function DataImportRow() {
         <Grid container>
           {patientFile.name !== null ? (
             <>
-              <h3 className={classes.root}>{patientFile.name}</h3>
+              <h3 className={classes.fileName}>{patientFile.name}</h3>
               <IconButton
                 aria-label="delete"
                 onClick={() => {
@@ -77,7 +77,7 @@ export default function DataImportRow() {
               </IconButton>
             </>
           ) : (
-            <h3 className={classes.root}>None Selected</h3>
+            <h3 className={classes.fileName}>None Selected</h3>
           )}
         </Grid>
         <h4>Upload From File System:</h4>
