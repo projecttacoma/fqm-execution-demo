@@ -69,10 +69,12 @@ export default function App() {
       measurementPeriodEnd: measurementPeriod.measurementPeriodEnd?.toISOString()
     };
 
+    // Clear existing results before new calculation
+    setResults(null);
+    setHTMLs([]);
+
     if (outputType === 'rawResults') {
       if (measureFile.content && patientFile.content) {
-        // Clear existing HTML markup if exists
-        setHTMLs([]);
         const { results } = await Calculator.calculateRaw(measureFile.content, [patientFile.content], options);
         setResults(results);
       }
@@ -89,8 +91,6 @@ export default function App() {
             });
           });
           setHTMLs(html);
-        } else {
-          setHTMLs([]);
         }
       }
     } else if (outputType === 'measureReports') {
@@ -104,9 +104,6 @@ export default function App() {
             html: m.text?.div || ''
           }));
           setHTMLs(htmls);
-        } else {
-          // Clear existing HTML markup if exists
-          setHTMLs([]);
         }
 
         setResults(mrs);
@@ -127,9 +124,6 @@ export default function App() {
               }
             ]);
           }
-        } else {
-          // Clear existing HTML markup if exists
-          setHTMLs([]);
         }
 
         setResults(results);
