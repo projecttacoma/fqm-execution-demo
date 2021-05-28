@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { OptionsRowContext } from '../../contexts/optionsRowContext';
+import { useRecoilState } from 'recoil';
+import { outputTypeState } from '../../state';
 
-export default function RadioButtonsGroup() {
-  const { outputType, setOutputType } = useContext(OptionsRowContext);
+function OutputTypeButtons() {
+  const [outputType, setOutputType] = useRecoilState(outputTypeState);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOutputType((event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
+    setOutputType(value);
   };
 
   return (
@@ -23,4 +26,4 @@ export default function RadioButtonsGroup() {
   );
 }
 
-export { RadioButtonsGroup };
+export default OutputTypeButtons;

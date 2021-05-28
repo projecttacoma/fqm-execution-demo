@@ -1,17 +1,21 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import 'date-fns';
 import './index.css';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import OptionsRow from './components/formatting/optionsRow';
-import InputRow from './components/formatting/inputRow';
+import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
-import { Calculator } from 'fqm-execution';
-import ReactJson from 'react-json-view';
-import parse from 'html-react-parser';
-import fileDownload from 'js-file-download';
-import { OptionsRowContext } from './contexts/optionsRowContext';
-import { InputRowContext } from './contexts/inputRowContext';
+import { Calculator, CalculatorTypes } from 'fqm-execution';
+import { R4 } from '@ahryman40k/ts-fhir-types';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  calculationOptionsState,
+  measureFileState,
+  measurementPeriodState,
+  outputTypeState,
+  patientFileState
+} from './state';
+import Results from './components/Results';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,15 +39,13 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       display: 'flex-grow'
     },
-    highlightedMarkup: {
-      '& pre': {
-        whiteSpace: 'pre-wrap'
-      }
+    buttons: {
+      margin: '4px'
     }
   })
 );
 
-interface HTML {
+export interface HTML {
   groupId: string;
   html: string;
 }
@@ -54,33 +56,105 @@ export default function App() {
   const [results, setResults] = useState<any>(null);
   const [htmls, setHTMLs] = useState<HTML[]>([]);
 
-  const {
-    outputType,
-    measurementPeriodStart,
-    setMeasurementPeriodStart,
-    measurementPeriodEnd,
-    setMeasurementPeriodEnd,
-    calculationOptions,
-    setCalculationOptions
-  } = useContext(OptionsRowContext);
+  const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
+  const [patientFile, setPatientFile] = useRecoilState(patientFileState);
+  const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
+  const outputType = useRecoilValue(outputTypeState);
+  const measurementPeriod = useRecoilValue(measurementPeriodState);
 
-  const {
-    measureFileName,
-    setPatientFileName,
-    setMeasureFileName,
-    measureBundle,
-    patientBundle,
-    setMeasureBundle,
-    setPatientBundle
-  } = useContext(InputRowContext);
+  const calculate = async () => {
+    const options: CalculatorTypes.CalculationOptions = {
+      ...calculationOptions,
+      measurementPeriodStart: measurementPeriod.measurementPeriodStart?.toISOString(),
+      measurementPeriodEnd: measurementPeriod.measurementPeriodEnd?.toISOString()
+    };
+
+    // Clear existing results before new calculation
+    setResults(null);
+    setHTMLs([]);
+
+    if (outputType === 'rawResults') {
+      if (measureFile.content && patientFile.content) {
+        const { results } = await Calculator.calculateRaw(measureFile.content, [patientFile.content], options);
+        setResults(results);
+      }
+    } else if (outputType === 'detailedResults') {
+      if (measureFile.content && patientFile.content) {
+        const { results } = await Calculator.calculate(measureFile.content, [patientFile.content], options);
+        setResults(results);
+        let html: HTML[] = [];
+        if (results !== null && calculationOptions.calculateHTML === true) {
+          results[0].detailedResults?.forEach(dr => {
+            html.push({
+              groupId: dr.groupId,
+              html: dr.html || ''
+            });
+          });
+          setHTMLs(html);
+        }
+      }
+    } else if (outputType === 'measureReports') {
+      if (measureFile.content && patientFile.content) {
+        const mrResults = await Calculator.calculateMeasureReports(measureFile.content, [patientFile.content], options);
+        const mrs = mrResults.results;
+
+        if (calculationOptions.calculateHTML) {
+          const htmls: HTML[] = (Array.isArray(mrs) ? mrs : [mrs]).map(m => ({
+            groupId: m.id || '',
+            html: m.text?.div || ''
+          }));
+          setHTMLs(htmls);
+        }
+
+        setResults(mrs);
+      }
+    } else if (outputType === 'gapsInCare') {
+      if (measureFile.content && patientFile.content) {
+        const { results } = await Calculator.calculateGapsInCare(measureFile.content, [patientFile.content], options);
+
+        if (calculationOptions.calculateHTML) {
+          const measureReportEntry = results.entry?.find(e => e.resource?.resourceType === 'MeasureReport');
+
+          if (measureReportEntry?.resource) {
+            const measureReport = measureReportEntry.resource as R4.IMeasureReport;
+            setHTMLs([
+              {
+                groupId: measureReport.id || '',
+                html: measureReport.text?.div || ''
+              }
+            ]);
+          }
+        }
+
+        setResults(results);
+      }
+    }
+  };
+
+  const reset = () => {
+    setMeasureFile({
+      name: null,
+      content: null
+    });
+    setPatientFile({
+      name: null,
+      content: null
+    });
+    setCalculationOptions({
+      calculateHTML: false,
+      calculateSDEs: false
+    });
+    setResults(null);
+    setHTMLs([]);
+  };
 
   return (
     <div className={classes.root}>
       <Grid>
         <h1 id="header">FQM Execution Demo</h1>
         <Grid container justify="space-evenly">
-          <Grid container item xs={11} spacing={2} alignItems="center">
-            <InputRow />
+          <Grid container item xs={11} spacing={2}>
+            <DataImportRow />
           </Grid>
         </Grid>
         <Grid container spacing={1} justify="space-evenly">
@@ -88,113 +162,21 @@ export default function App() {
             <OptionsRow />
           </Grid>
         </Grid>
-        <Grid container justify="flex-end">
-          <Button
-            variant="contained"
-            onClick={() => {
-              setMeasureFileName(null);
-              setPatientFileName(null);
-              setMeasureBundle(null);
-              setPatientBundle(null);
-              setMeasurementPeriodStart(new Date('1/1/2019'));
-              setMeasurementPeriodEnd(new Date('12/31/2019'));
-              setCalculationOptions({
-                calculateHTML: false,
-                calculateSDEs: false
-              });
-              setResults(null);
-              setHTMLs([]);
-            }}
-          >
+        <Grid container justify="center" direction="row">
+          <Button variant="contained" onClick={reset} className={classes.buttons}>
             Reset
           </Button>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => {
-              const options = {
-                measurementPeriodStart: measurementPeriodStart?.toISOString(),
-                measurementPeriodEnd: measurementPeriodEnd?.toISOString(),
-                ...calculationOptions
-              };
-              if (outputType === 'rawResults') {
-                setResults(Calculator.calculateRaw(measureBundle, patientBundle, options));
-              } else if (outputType === 'detailedResults') {
-                let detailedResultsCalculation = Calculator.calculate(measureBundle, patientBundle, options);
-                setResults(detailedResultsCalculation);
-                let IDhtml = [];
-                if (detailedResultsCalculation !== null && calculationOptions.calculateHTML === true) {
-                  let i: any;
-                  for (i in detailedResultsCalculation.results[0].detailedResults) {
-                    if (detailedResultsCalculation.results[0].detailedResults !== undefined) {
-                      IDhtml.push({
-                        groupId: detailedResultsCalculation.results[0].detailedResults[i].groupId,
-                        html: detailedResultsCalculation.results[0].detailedResults[i].html!
-                      });
-                    }
-                  }
-                  setHTMLs(IDhtml);
-                } else {
-                  setHTMLs([]);
-                }
-              } else if (outputType === 'measureReports') {
-                const mrResults = Calculator.calculateMeasureReports(measureBundle, patientBundle, options);
-                const mrs = mrResults.results;
-
-                if (options.calculateHTML) {
-                  const htmls: HTML[] = mrs.map(m => ({
-                    groupId: m.id || '',
-                    html: m.text?.div || ''
-                  }));
-                  setHTMLs(htmls);
-                }
-
-                setResults(mrResults);
-              } else if (outputType === 'gapsInCare') {
-                setResults(Calculator.calculateGapsInCare(measureBundle, patientBundle, options));
-              }
-            }}
+            onClick={calculate}
+            className={classes.buttons}
+            disabled={measureFile.content === null || patientFile.content === null}
           >
             Calculate
           </Button>
         </Grid>
-        <Grid container>
-          <Grid container item xs={6} direction="row">
-            <div>
-              <h2>Results:</h2>
-              {results && (
-                <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
-              )}
-              {results && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    fileDownload(
-                      JSON.stringify(results),
-                      measureFileName?.includes('.json')
-                        ? `results-${measureFileName}`
-                        : `results-${measureFileName}.json`
-                    );
-                  }}
-                >
-                  Download
-                </Button>
-              )}
-            </div>
-          </Grid>
-          <Grid container item xs={6} direction="row">
-            {htmls &&
-              htmls.map(html => {
-                return (
-                  <div key={html.groupId} className={classes.highlightedMarkup}>
-                    <h2>HTML:</h2>
-                    {parse(html.html)}
-                  </div>
-                );
-              })}
-          </Grid>
-        </Grid>
+        <Results results={results} measureFile={measureFile} htmls={htmls} />
       </Grid>
     </div>
   );

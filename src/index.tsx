@@ -1,18 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { RecoilRoot } from 'recoil';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import OptionsRowProvider from './contexts/optionsRowContext';
-import InputRowProvider from './contexts/inputRowContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <OptionsRowProvider>
-      <InputRowProvider>
-        <App />
-      </InputRowProvider>
-    </OptionsRowProvider>
+    <RecoilRoot>
+      <App />
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')
 );
