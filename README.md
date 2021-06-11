@@ -1,6 +1,6 @@
 # fqm-execution-demo
 
-This is a React application that demonstrates the capabilities of the [fqm-execution](https://github.com/projecttacoma/fqm-execution) library in calculating FHIR-based electronic Clinical Quality Measures (eCQMs).
+This is a React app that demonstrates the capabilities of the [fqm-execution](https://github.com/projecttacoma/fqm-execution) library in calculating FHIR-based electronic Clinical Quality Measures (eCQMs).
 
 ## Hosted Version
 
