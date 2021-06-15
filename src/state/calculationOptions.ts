@@ -8,3 +8,4 @@ export const calculationOptionsState = atom<CalculatorTypes.CalculationOptions>(
     calculateSDEs: false
   }
 });
+
