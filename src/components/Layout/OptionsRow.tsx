@@ -1,6 +1,11 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { CalculationOptionsButtons, MeasurementPeriodDatePicker, OutputTypeButtons, ReportTypeButtons } from '../CalculationOptions';
+import {
+  CalculationOptionsButtons,
+  MeasurementPeriodDatePicker,
+  OutputTypeButtons,
+  ReportTypeButtons
+} from '../CalculationOptions';
 
 export default function OptionsRow() {
   return (

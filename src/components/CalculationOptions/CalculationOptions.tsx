@@ -23,7 +23,10 @@ function CalculationOptionsButtons() {
           <Checkbox
             checked={outputType !== 'rawResults' && calculationOptions.calculateSDEs}
             onChange={handleChange}
-            disabled={outputType === 'rawResults'}
+            disabled={
+              outputType === 'rawResults' ||
+              (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+            }
             name="calculateSDEs"
             color="primary"
           />
@@ -35,7 +38,10 @@ function CalculationOptionsButtons() {
           <Checkbox
             checked={outputType !== 'rawResults' && calculationOptions.calculateHTML}
             onChange={handleChange}
-            disabled={outputType === 'rawResults'}
+            disabled={
+              outputType === 'rawResults' ||
+              (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+            }
             name="calculateHTML"
             color="primary"
           />
@@ -47,4 +53,3 @@ function CalculationOptionsButtons() {
 }
 
 export default CalculationOptionsButtons;
-
