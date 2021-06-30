@@ -6,6 +6,9 @@ import React from 'react';
 import { FileUploadState } from '../../state';
 import { GetApp } from '@material-ui/icons';
 import { HTML } from '../../App';
+import { PopulationResults } from '../Results';
+
+const fhirpath = require('fhirpath');
 
 const useStyles = makeStyles(() => ({
   highlightedMarkup: {
@@ -23,6 +26,7 @@ interface Props {
 
 const Results: React.FC<Props> = ({ results, measureFile, htmls }) => {
   const classes = useStyles();
+  const id = results ? (fhirpath.evaluate(results, 'MeasureReport.subject.reference'))[0].split('/') : '';
 
   return (
     <Grid container>
@@ -44,6 +48,14 @@ const Results: React.FC<Props> = ({ results, measureFile, htmls }) => {
             </IconButton>
           )}
         </Grid>
+        {results && fhirpath.evaluate(results, 'MeasureReport.group').map((group:any) => {
+          return (
+            <Grid container> 
+              <h3>{group.id} Population Results</h3>
+              <PopulationResults key={group.id} results={group} id={id}/>
+            </Grid>
+          )}
+        )}
         {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
       </Grid>
       <Grid container item xs={6}>
