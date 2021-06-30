@@ -1,5 +1,4 @@
-import { makeStyles, Grid, Table, TableRow, TableHead, TableCell, TableBody } from '@material-ui/core';
-import ReactJson from 'react-json-view';
+import { makeStyles, Table, TableRow, TableHead, TableCell, TableBody } from '@material-ui/core';
 import { patientFileState } from '../../state';
 import React from 'react';
 import { PatientHelper } from '../Helpers';
