@@ -7,8 +7,10 @@ import { FileUploadState } from '../../state';
 import { GetApp } from '@material-ui/icons';
 import { HTML } from '../../App';
 import { PopulationResults } from '../Results';
-
-const fhirpath = require('fhirpath');
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { calculationOptionsState, outputTypeState } from '../../state';
+import { R4 } from '@ahryman40k/ts-fhir-types';
+import fhirpath from 'fhirpath';
 
 const useStyles = makeStyles(() => ({
   highlightedMarkup: {
@@ -26,49 +28,59 @@ interface Props {
 
 const Results: React.FC<Props> = ({ results, measureFile, htmls }) => {
   const classes = useStyles();
-  const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
+  const outputType = useRecoilValue(outputTypeState);
+  const [calculationOptions] = useRecoilState(calculationOptionsState);
 
   return (
     <Grid container>
-      <Grid container item xs={6} direction="column">
-        <Grid container direction="row">
-          <h2>Results:</h2>
-          {results && (
-            <IconButton
-              onClick={() => {
-                fileDownload(
-                  JSON.stringify(results, null, 2),
-                  measureFile.name?.includes('.json')
-                    ? `results-${measureFile.name}`
-                    : `results-${measureFile.name}.json`
-                );
-              }}
-            >
-              <GetApp fontSize="small" />
-            </IconButton>
-          )}
+      <Grid container item xs={12} direction="column" spacing={2}>
+        <h2>Results:</h2>
+        <Grid container item xs={12} direction="row" justify="center" alignItems="center">
+          {outputType === 'measureReports' &&
+            calculationOptions.reportType === 'individual' &&
+            fhirpath.evaluate(results, 'MeasureReport.group').map((group: R4.IMeasureReport_Group) => {
+              const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
+              return (
+                <Grid container item xs={12} direction="column" justify="center" alignItems="center">
+                  <h2>{group.id} Population Results</h2>
+                  <PopulationResults key={group.id} results={group} id={id} />
+                </Grid>
+              );
+            })}
         </Grid>
-        {results &&
-          fhirpath.evaluate(results, 'MeasureReport.group').map((group: any) => {
-            return (
-              <Grid container>
-                <h3>{group.id} Population Results</h3>
-                <PopulationResults key={group.id} results={group} id={id} />
-              </Grid>
-            );
-          })}
-        {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
-      </Grid>
-      <Grid container item xs={6}>
-        {htmls &&
-          htmls.map(html => {
-            return (
-              <div key={html.groupId} className={classes.highlightedMarkup}>
-                <h2>HTML:</h2>
-                {parse(html.html)}
-              </div>
-            );
-          })}
+        <Grid container item xs={12} direction="row">
+          <Grid item xs>
+            <Grid container item xs direction="row">
+              {results && <h2>JSON:</h2>}
+              {results && (
+                <IconButton
+                  onClick={() => {
+                    fileDownload(
+                      JSON.stringify(results, null, 2),
+                      measureFile.name?.includes('.json')
+                        ? `results-${measureFile.name}`
+                        : `results-${measureFile.name}.json`
+                    );
+                  }}
+                >
+                  <GetApp fontSize="small" />
+                </IconButton>
+              )}
+            </Grid>
+            {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
+          </Grid>
+          <Grid item xs>
+            {htmls &&
+              htmls.map(html => {
+                return (
+                  <div key={html.groupId} className={classes.highlightedMarkup}>
+                    <h2>HTML:</h2>
+                    {parse(html.html)}
+                  </div>
+                );
+              })}
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );

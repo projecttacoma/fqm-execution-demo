@@ -1,1 +1,1 @@
-export { default as PatientHelper } from './PatientHelper';
+export * from './PatientHelper';

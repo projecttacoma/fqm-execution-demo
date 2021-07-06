@@ -1,10 +1,10 @@
 import { makeStyles, Table, TableRow, TableHead, TableCell, TableBody } from '@material-ui/core';
 import { patientFileState } from '../../state';
 import React from 'react';
-import { PatientHelper } from '../Helpers';
+import { findPatientInBundle } from '../Helpers';
 import { useRecoilValue } from 'recoil';
-
-const fhirpath = require('fhirpath');
+import { R4 } from '@ahryman40k/ts-fhir-types';
+import fhirpath from 'fhirpath';
 
 const useStyles = makeStyles({
   table: {
@@ -16,13 +16,13 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  results: any;
+  results: R4.IMeasureReport_Group;
   id: string;
 }
 
 const PopulationResults: React.FC<Props> = ({ results, id }) => {
   const patientFile = useRecoilValue(patientFileState);
-  const patientResource = patientFile.content === null ? null : PatientHelper(patientFile.content, id[1]);
+  const patientResource = patientFile.content === null ? null : findPatientInBundle(patientFile.content, id[1]);
   const classes = useStyles();
 
   const columns = ['Patient Name', 'DOB', 'Gender'];
