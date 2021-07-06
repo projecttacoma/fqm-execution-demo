@@ -7,13 +7,14 @@ import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import { R4 } from '@ahryman40k/ts-fhir-types';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   calculationOptionsState,
   measureFileState,
   measurementPeriodState,
   outputTypeState,
-  patientFileState
+  patientFileState,
+  resultsState
 } from './state';
 import Results from './components/Results';
 
@@ -53,7 +54,7 @@ export interface HTML {
 export default function App() {
   const classes = useStyles();
 
-  const [results, setResults] = useState<any>(null);
+  const setResults = useSetRecoilState(resultsState);
   const [htmls, setHTMLs] = useState<HTML[]>([]);
 
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
@@ -176,7 +177,7 @@ export default function App() {
             Calculate
           </Button>
         </Grid>
-        <Results results={results} measureFile={measureFile} htmls={htmls} />
+        <Results measureFile={measureFile} htmls={htmls} />
       </Grid>
     </div>
   );

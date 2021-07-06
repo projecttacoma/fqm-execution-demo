@@ -7,8 +7,8 @@ import { FileUploadState } from '../../state';
 import { GetApp } from '@material-ui/icons';
 import { HTML } from '../../App';
 import { PopulationResults } from '../Results';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { calculationOptionsState, outputTypeState } from '../../state';
+import { useRecoilValue } from 'recoil';
+import { calculationOptionsState, outputTypeState, resultsState } from '../../state';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import fhirpath from 'fhirpath';
 
@@ -21,15 +21,15 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface Props {
-  results: any;
   measureFile: FileUploadState;
   htmls: HTML[];
 }
 
-const Results: React.FC<Props> = ({ results, measureFile, htmls }) => {
+const Results: React.FC<Props> = ({ measureFile, htmls }) => {
   const classes = useStyles();
   const outputType = useRecoilValue(outputTypeState);
-  const [calculationOptions] = useRecoilState(calculationOptionsState);
+  const calculationOptions = useRecoilValue(calculationOptionsState);
+  const results = useRecoilValue(resultsState);
 
   return (
     <Grid container>
@@ -70,7 +70,8 @@ const Results: React.FC<Props> = ({ results, measureFile, htmls }) => {
             {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
           </Grid>
           <Grid item xs>
-            {htmls &&
+            {results &&
+              htmls &&
               htmls.map(html => {
                 return (
                   <div key={html.groupId} className={classes.highlightedMarkup}>

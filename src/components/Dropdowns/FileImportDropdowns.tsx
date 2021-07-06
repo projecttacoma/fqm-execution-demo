@@ -3,13 +3,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import {
   measureDropdownOptionsState,
   measureFileState,
   patientDropdownOptionsState,
-  patientFileState
+  patientFileState,
+  resultsState
 } from '../../state';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,8 +25,10 @@ export function MeasureDropdown() {
   const classes = useStyles();
   const measureOptions = useRecoilValue(measureDropdownOptionsState);
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
+  const setResults = useSetRecoilState(resultsState);
 
   const onMeasureDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setResults(null);
     const name = event.target.value as string;
 
     fetch(
@@ -71,8 +74,10 @@ export function PatientDropdown() {
   const [patientFile, setPatientFile] = useRecoilState(patientFileState);
   const measureFile = useRecoilValue(measureFileState);
   const patientOptions = useRecoilValue(patientDropdownOptionsState);
+  const setResults = useSetRecoilState(resultsState);
 
   const onPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setResults(null);
     const name = event.target.value as string;
     fetch(
       `https://raw.githubusercontent.com/DBCG/connectathon/master/fhir401/bundles/measure/${measureFile.name}/${measureFile.name}-files/${name}`
