@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { DropzoneRootProps, useDropzone } from 'react-dropzone';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { measureFileState, patientFileState } from '../../state';
+import { measureFileState, patientFileState, resultsState } from '../../state';
 
 const getColor = (props: DropzoneRootProps) => {
   if (props.isDragAccept) {
@@ -37,9 +37,11 @@ const Container = styled.div`
 
 export const MeasureFileUpload = () => {
   const setMeasureFileState = useSetRecoilState(measureFileState);
+  const setResults = useSetRecoilState(resultsState);
 
   const onMeasureUpload = useCallback(
     files => {
+      setResults(null);
       const measureBundleFile = files[0];
       const reader = new FileReader();
       reader.onload = () => {
@@ -51,7 +53,7 @@ export const MeasureFileUpload = () => {
       };
       reader.readAsText(measureBundleFile);
     },
-    [setMeasureFileState]
+    [setMeasureFileState, setResults]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -71,9 +73,11 @@ export const MeasureFileUpload = () => {
 
 export const PatientFileUpload = () => {
   const setPatientFileState = useSetRecoilState(patientFileState);
+  const setResults = useSetRecoilState(resultsState);
 
   const onPatientUpload = useCallback(
     files => {
+      setResults(null);
       const patientBundleFile = files[0];
       const reader = new FileReader();
       reader.onload = () => {
@@ -85,7 +89,7 @@ export const PatientFileUpload = () => {
       };
       reader.readAsText(patientBundleFile);
     },
-    [setPatientFileState]
+    [setPatientFileState, setResults]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
