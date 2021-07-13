@@ -21,6 +21,47 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+export function OtherMeasureDropdown() {
+  const classes = useStyles();
+  const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
+  const setResults = useSetRecoilState(resultsState);
+
+  const onMeasureDropdownChange = () => {
+    setResults(null);
+
+    fetch(
+      'https://raw.githubusercontent.com/cqframework/cqf-ccc/master/bundles/measure/ColorectalCancerScreeningCQM/ColorectalCancerScreeningCQM-bundle.json'
+    )
+      .then(response => response.json())
+      .then(data => {
+        setMeasureFile({
+          name: 'ColorectalCancerScreeningCQM-bundle',
+          content: data as R4.IBundle,
+          fromFileUpload: false
+        });
+      })
+      .catch(error => console.log('error: ', error));
+  };
+
+  return (
+    <div style={{ width: '100%' }}>
+      <FormControl className={classes.root}>
+        <Select
+          value={measureFile.name || ''}
+          onChange={onMeasureDropdownChange}
+          disabled={measureFile.content !== null && measureFile.fromFileUpload === true}
+        >
+          {['ColorectalCancerScreeningCQM-bundle'].map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}
+
 export function MeasureDropdown() {
   const classes = useStyles();
   const measureOptions = useRecoilValue(measureDropdownOptionsState);
@@ -102,6 +143,49 @@ export function PatientDropdown() {
           disabled={patientFile.content !== null && patientFile.fromFileUpload === true}
         >
           {patientOptions.map(option => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+}
+
+export function OtherPatientDropdown() {
+  const classes = useStyles();
+
+  const [patientFile, setPatientFile] = useRecoilState(patientFileState);
+  const setResults = useSetRecoilState(resultsState);
+
+  const onPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setResults(null);
+    const name = event.target.value as string;
+    fetch(
+      `https://raw.githubusercontent.com/projecttacoma/connectathon/demo/fhir401/bundles/measure/EXM130-7.3.000/EXM130-7.3.000-files/${name}`
+    )
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setPatientFile({
+          name,
+          content: data as R4.IBundle,
+          fromFileUpload: false
+        });
+      })
+      .catch(error => console.log('error: ', error));
+  };
+
+  return (
+    <div style={{ width: '100%' }}>
+      <FormControl className={classes.root}>
+        <Select
+          value={patientFile.name || ''}
+          onChange={onPatientDropdownChange}
+          disabled={patientFile.content !== null && patientFile.fromFileUpload === true}
+        >
+          {['tests-numer-EXM130-bundle.json', 'tests-denom-EXM130-bundle.json'].map(option => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>

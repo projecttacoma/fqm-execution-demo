@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { MeasureFileUpload, PatientFileUpload } from '../FileUpload';
-import { MeasureDropdown, PatientDropdown } from '../Dropdowns';
+import { MeasureDropdown, OtherMeasureDropdown, OtherPatientDropdown, PatientDropdown } from '../Dropdowns';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
@@ -48,14 +48,18 @@ export default function DataImportRow() {
               </IconButton>
             </>
           ) : (
-            <h3 className={classes.fileName}>None Selected</h3>
-          )}
+              <h3 className={classes.fileName}>None Selected</h3>
+            )}
         </Grid>
         <h4>Upload From File System:</h4>
         <MeasureFileUpload />
         <h4>OR Select From Connectathon Repository:</h4>
         <Suspense fallback={<Loading />}>
           <MeasureDropdown />
+        </Suspense>
+        <h4>OR Select Other Supported Bundle:</h4>
+        <Suspense fallback={<Loading />}>
+          <OtherMeasureDropdown />
         </Suspense>
       </Grid>
       <Grid item xs={6}>
@@ -77,14 +81,18 @@ export default function DataImportRow() {
               </IconButton>
             </>
           ) : (
-            <h3 className={classes.fileName}>None Selected</h3>
-          )}
+              <h3 className={classes.fileName}>None Selected</h3>
+            )}
         </Grid>
         <h4>Upload From File System:</h4>
         <PatientFileUpload />
         <h4>OR Select From Connectathon Repository:</h4>
         <Suspense fallback={<Loading />}>
           <PatientDropdown />
+        </Suspense>
+        <h4>OR Select Other Supported Bundle:</h4>
+        <Suspense fallback={<Loading />}>
+          <OtherPatientDropdown />
         </Suspense>
       </Grid>
     </React.Fragment>
