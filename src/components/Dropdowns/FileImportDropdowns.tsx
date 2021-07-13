@@ -74,10 +74,10 @@ export function MeasureDropdown() {
 
     fetch(
       `https://raw.githubusercontent.com/DBCG/connectathon/master/fhir401/bundles/measure/` +
-        name +
-        `/` +
-        name +
-        `-bundle.json`
+      name +
+      `/` +
+      name +
+      `-bundle.json`
     )
       .then(response => response.json())
       .then(data => {
@@ -167,7 +167,6 @@ export function OtherPatientDropdown() {
     )
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         setPatientFile({
           name,
           content: data as R4.IBundle,
