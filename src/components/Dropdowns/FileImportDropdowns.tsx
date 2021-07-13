@@ -30,7 +30,7 @@ export function OtherMeasureDropdown() {
     setResults(null);
 
     fetch(
-      'https://raw.githubusercontent.com/cqframework/cqf-ccc/master/bundles/measure/ColorectalCancerScreeningCQM/ColorectalCancerScreeningCQM-bundle.json'
+      'https://raw.githubusercontent.com/cqframework/cqf-ccc/56ddf9ef30393a7a0a529088673f92171425bdaa/bundles/measure/ColorectalCancerScreeningCQM/ColorectalCancerScreeningCQM-bundle.json'
     )
       .then(response => response.json())
       .then(data => {
@@ -74,10 +74,10 @@ export function MeasureDropdown() {
 
     fetch(
       `https://raw.githubusercontent.com/DBCG/connectathon/master/fhir401/bundles/measure/` +
-      name +
-      `/` +
-      name +
-      `-bundle.json`
+        name +
+        `/` +
+        name +
+        `-bundle.json`
     )
       .then(response => response.json())
       .then(data => {
