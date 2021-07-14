@@ -28,7 +28,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
               </Typography>
             </AccordionDetails>
           </Accordion>
-        )
+        );
       })}
     </div>
   );
