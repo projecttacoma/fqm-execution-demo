@@ -6,7 +6,7 @@ import React from 'react';
 import { FileUploadState } from '../../state';
 import { GetApp } from '@material-ui/icons';
 import { HTML } from '../../App';
-import { PopulationResults } from '../Results';
+import { PopulationResults, DetectedIssueResources } from '../Results';
 import { useRecoilValue } from 'recoil';
 import { calculationOptionsState, outputTypeState, resultsState } from '../../state';
 import { R4 } from '@ahryman40k/ts-fhir-types';
@@ -30,6 +30,7 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
   const outputType = useRecoilValue(outputTypeState);
   const calculationOptions = useRecoilValue(calculationOptionsState);
   const results = useRecoilValue(resultsState);
+  const detectedIssues = fhirpath.evaluate(results, 'Bundle.entry.resource.DetectedIssue');
 
   return (
     <Grid container>
@@ -45,6 +46,16 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
                   <h2>{group.id} Population Results</h2>
                   <PopulationResults key={group.id} results={group} id={id} />
                 </Grid>
+              );
+            })}
+          {results &&
+            detectedIssues.map((issue: R4.IDetectedIssue) => {
+              return (
+                <div>
+                  <h3>Detected Issue</h3>
+                  <h3>id = {fhirpath.evaluate(issue, 'id')}</h3>
+                  <DetectedIssueResources detectedIssue={issue} />
+                </div>
               );
             })}
         </Grid>
