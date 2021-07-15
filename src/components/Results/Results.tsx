@@ -52,7 +52,15 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
             detectedIssues.map((issue: R4.IDetectedIssue) => {
               const detectedIssueId = fhirpath.evaluate(issue, 'id');
               return (
-                <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={detectedIssueId}>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                  key={detectedIssueId}
+                >
                   <h3>Detected Issue</h3>
                   <h4>id = {detectedIssueId}</h4>
                   <DetectedIssueResources detectedIssue={issue} />

@@ -18,7 +18,10 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
           <Accordion key={guidanceResponseId}>
             <AccordionSummary>
               <Grid item xs>
-                <h4> {fhirpath.evaluate(response, 'resourceType')} {guidanceResponseId} </h4>
+                <h4>
+                  {' '}
+                  {fhirpath.evaluate(response, 'resourceType')} {guidanceResponseId}{' '}
+                </h4>
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
