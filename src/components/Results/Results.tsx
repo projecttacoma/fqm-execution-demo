@@ -42,7 +42,7 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
             fhirpath.evaluate(results, 'MeasureReport.group').map((group: R4.IMeasureReport_Group) => {
               const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
               return (
-                <Grid container item xs={12} direction="column" justify="center" alignItems="center">
+                <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={group.id}>
                   <h2>{group.id} Population Results</h2>
                   <PopulationResults key={group.id} results={group} id={id} />
                 </Grid>
@@ -50,12 +50,13 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
             })}
           {results &&
             detectedIssues.map((issue: R4.IDetectedIssue) => {
+              const detectedIssueId = fhirpath.evaluate(issue, 'id');
               return (
-                <div>
+                <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={detectedIssueId}>
                   <h3>Detected Issue</h3>
-                  <h3>id = {fhirpath.evaluate(issue, 'id')}</h3>
+                  <h4>id = {detectedIssueId}</h4>
                   <DetectedIssueResources detectedIssue={issue} />
-                </div>
+                </Grid>
               );
             })}
         </Grid>

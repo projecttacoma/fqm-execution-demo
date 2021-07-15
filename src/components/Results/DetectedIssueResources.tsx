@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@material-ui/core';
+import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import fhirpath from 'fhirpath';
 
@@ -13,19 +13,23 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   return (
     <div>
       {guidanceResponseArray.map((response: R4.IGuidanceResponse) => {
+        const guidanceResponseId = fhirpath.evaluate(response, 'id');
         return (
-          <Accordion>
+          <Accordion key={guidanceResponseId}>
             <AccordionSummary>
-              <Typography>
-                <div> {fhirpath.evaluate(response, 'resourceType')} </div>
-                <div> id = {fhirpath.evaluate(response, 'id')} </div>
-              </Typography>
+              <Grid item xs>
+                <h4> {fhirpath.evaluate(response, 'resourceType')} {guidanceResponseId} </h4>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                <div> reasonCode = {fhirpath.evaluate(response, 'reasonCode.coding.code')} </div>
-                <div> display = {fhirpath.evaluate(response, 'reasonCode.coding.display')} </div>
-              </Typography>
+              <Grid item xs>
+                <Grid item xs>
+                  code: {fhirpath.evaluate(response, 'reasonCode.coding.code')}
+                </Grid>
+                <Grid item xs>
+                  display: {fhirpath.evaluate(response, 'reasonCode.coding.display')}
+                </Grid>
+              </Grid>
             </AccordionDetails>
           </Accordion>
         );
