@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import 'date-fns';
 import './index.css';
-import Grid from '@material-ui/core/Grid';
+import { Grid, IconButton } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import { Close } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
@@ -17,6 +19,7 @@ import {
   resultsState
 } from './state';
 import Results from './components/Results';
+import { Collapse } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,6 +59,7 @@ export default function App() {
 
   const setResults = useSetRecoilState(resultsState);
   const [htmls, setHTMLs] = useState<HTML[]>([]);
+  const [hasError, setHasError] = useState(null);
 
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
   const [patientFile, setPatientFile] = useRecoilState(patientFileState);
@@ -63,6 +67,15 @@ export default function App() {
   const outputType = useRecoilValue(outputTypeState);
   const measurementPeriod = useRecoilValue(measurementPeriodState);
 
+  //Function to wrap the calculate function and catch errors in fqm-execution
+  const onCalculateButtonClick = async () => {
+    try {
+      await calculate();
+    } catch (error) {
+      setHasError(error.message);
+      console.error(error);
+    }
+  };
   const calculate = async () => {
     const options: CalculatorTypes.CalculationOptions = {
       ...calculationOptions,
@@ -81,6 +94,8 @@ export default function App() {
       }
     } else if (outputType === 'detailedResults') {
       if (measureFile.content && patientFile.content) {
+        console.log(measureFile.content);
+        console.log(patientFile.content);
         const { results } = await Calculator.calculate(measureFile.content, [patientFile.content], options);
         setResults(results);
         let html: HTML[] = [];
@@ -112,7 +127,6 @@ export default function App() {
     } else if (outputType === 'gapsInCare') {
       if (measureFile.content && patientFile.content) {
         const { results } = await Calculator.calculateGapsInCare(measureFile.content, [patientFile.content], options);
-
         if (calculationOptions.calculateHTML) {
           const measureReportEntry = results.entry?.find(e => e.resource?.resourceType === 'MeasureReport');
 
@@ -151,6 +165,18 @@ export default function App() {
 
   return (
     <div className={classes.root}>
+      <Collapse in={hasError !== null}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton size="small" onClick={() => setHasError(null)}>
+              <Close />
+            </IconButton>
+          }
+        >
+          {hasError}
+        </Alert>
+      </Collapse>
       <Grid>
         <h1 id="header">FQM Execution Demo</h1>
         <Grid container justify="space-evenly">
@@ -170,7 +196,7 @@ export default function App() {
           <Button
             variant="contained"
             color="primary"
-            onClick={calculate}
+            onClick={onCalculateButtonClick}
             className={classes.buttons}
             disabled={measureFile.content === null || patientFile.content === null}
           >
