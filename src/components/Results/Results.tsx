@@ -22,10 +22,11 @@ const useStyles = makeStyles(() => ({
 
 interface Props {
   measureFile: FileUploadState;
+  patientFile: FileUploadState;
   htmls: HTML[];
 }
 
-const Results: React.FC<Props> = ({ measureFile, htmls }) => {
+const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
   const classes = useStyles();
   const outputType = useRecoilValue(outputTypeState);
   const calculationOptions = useRecoilValue(calculationOptionsState);
@@ -88,6 +89,9 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
               )}
             </Grid>
             {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
+            {patientFile && (
+              <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+            )}
           </Grid>
           <Grid item xs>
             {results &&
