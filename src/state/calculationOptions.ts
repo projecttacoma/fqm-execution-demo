@@ -5,6 +5,7 @@ export const calculationOptionsState = atom<CalculatorTypes.CalculationOptions>(
   key: 'calculationOptions',
   default: {
     calculateHTML: false,
-    calculateSDEs: false
+    calculateSDEs: false,
+    reportType: 'individual'
   }
 });
