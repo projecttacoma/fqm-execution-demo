@@ -49,7 +49,7 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
               );
             })}
           {results &&
-            detectedIssues.map((issue: R4.IDetectedIssue) => {
+            detectedIssues.map((issue: R4.IDetectedIssue, index: number) => {
               const detectedIssueId = fhirpath.evaluate(issue, 'id');
               return (
                 <Grid
@@ -61,8 +61,8 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
                   alignItems="center"
                   key={detectedIssueId}
                 >
-                  <h3>Detected Issue</h3>
-                  <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Response(s)</h4>
+                  <h3>Detected Issue {index + 1}</h3>
+                  <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Response(s)</h4>                  
                   <DetectedIssueResources detectedIssue={issue} />
                 </Grid>
               );
