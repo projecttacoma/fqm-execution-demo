@@ -9,7 +9,7 @@ import { calculationOptionsState, outputTypeState } from '../../state';
 function ReportTypeButtons() {
   const outputType = useRecoilValue(outputTypeState);
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
-
+  console.log(calculationOptions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value;
     setCalculationOptions({
@@ -24,14 +24,16 @@ function ReportTypeButtons() {
         <FormControlLabel
           control={<Radio color="primary" />}
           value="individual"
+          checked={calculationOptions.reportType === 'individual' ?? false}
           label="Individual"
-          disabled={outputType !== 'measureReports' && outputType !== 'gapsInCare'}
+          disabled={outputType !== 'measureReports'}
         />
         <FormControlLabel
           control={<Radio color="primary" />}
           value="summary"
+          checked={calculationOptions.reportType === 'summary' ?? false}
           label="Summary"
-          disabled={outputType !== 'measureReports' && outputType !== 'gapsInCare'}
+          disabled={outputType !== 'measureReports'}
         />
       </RadioGroup>
     </FormControl>
