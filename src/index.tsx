@@ -3,12 +3,21 @@ import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import './index.css';
 import App from './App';
+import ResultsPage from './components/ResultsPage';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <App />
+      <Router>
+        <Route path="/home">
+          <App />
+        </Route>
+        <Route path="/results">
+          <ResultsPage />
+        </Route>
+      </Router>
     </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')

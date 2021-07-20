@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useHistory } from 'react-router-dom';
 import {
   calculationOptionsState,
   measureFileState,
@@ -45,6 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     buttons: {
       margin: '4px'
+    },
+    resultsButton: {
+      backgroundColor: '#7FFF00'
     }
   })
 );
@@ -67,15 +71,19 @@ export default function App() {
   const outputType = useRecoilValue(outputTypeState);
   const measurementPeriod = useRecoilValue(measurementPeriodState);
 
+  const history = useHistory();
+
   //Function to wrap the calculate function and catch errors in fqm-execution
   const onCalculateButtonClick = async () => {
     try {
       await calculate();
+      history.push('/results');
     } catch (error) {
       setHasError(error.message);
       console.error(error);
     }
   };
+
   const calculate = async () => {
     const options: CalculatorTypes.CalculationOptions = {
       ...calculationOptions,
@@ -206,7 +214,6 @@ export default function App() {
             Calculate
           </Button>
         </Grid>
-        <Results measureFile={measureFile} htmls={htmls} />
       </Grid>
     </div>
   );
