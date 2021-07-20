@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { HTML } from '../App';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { measureFileState, patientFileState } from '../state';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
@@ -15,14 +15,16 @@ const useStyles = makeStyles({
 
 const ResultsPage: React.FC = () => {
   const styles = useStyles();
-  const [htmls, setHTMLs] = useState<HTML[]>([]);
+  const [htmls] = useState<HTML[]>([]);
   const measureFile = useRecoilValue(measureFileState);
   const patientFile = useRecoilValue(patientFileState);
   const history = useHistory();
   return (
     <div className={styles.root}>
+      <Button variant="contained" onClick={() => history.push('/fqm-execution-demo')}>
+        Home
+      </Button>
       <Results measureFile={measureFile} patientFile={patientFile} htmls={htmls} />
-      <Button onClick={() => history.push('/home')}>Home</Button>
     </div>
   );
 };
