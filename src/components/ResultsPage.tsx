@@ -22,7 +22,7 @@ const ResultsPage: React.FC = () => {
   return (
     <div className={styles.root}>
       <Results measureFile={measureFile} patientFile={patientFile} htmls={htmls} />
-      <Button onClick={() => history.push('/home')}>Home</Button>
+      <Button onClick={() => history.push('/fqm-execution-demo')}>Home</Button>
     </div>
   );
 };

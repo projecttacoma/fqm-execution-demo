@@ -11,7 +11,7 @@ ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <Router>
-        <Route path="/home">
+        <Route path="/fqm-execution-demo">
           <App />
         </Route>
         <Route path="/results">
