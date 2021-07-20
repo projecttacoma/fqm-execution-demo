@@ -9,7 +9,6 @@ import { calculationOptionsState, outputTypeState } from '../../state';
 function ReportTypeButtons() {
   const outputType = useRecoilValue(outputTypeState);
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
-  console.log(calculationOptions);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value;
     setCalculationOptions({
