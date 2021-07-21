@@ -18,7 +18,6 @@ const ResultsPage: React.FC = () => {
   const measureFile = useRecoilValue(measureFileState);
   const patientFile = useRecoilValue(patientFileState);
   const history = useHistory();
-  console.log(htmls);
   return (
     <div className={styles.root}>
       <Button variant="contained" onClick={() => history.push('/fqm-execution-demo')}>

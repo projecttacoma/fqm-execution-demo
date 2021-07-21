@@ -32,8 +32,7 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
   const calculationOptions = useRecoilValue(calculationOptionsState);
   const results = useRecoilValue(resultsState);
   const detectedIssues = fhirpath.evaluate(results, 'Bundle.entry.resource.DetectedIssue');
-  console.log(results);
-  console.log(htmls);
+
   return (
     <Grid container>
       <Grid container item xs={12} direction="column" spacing={2}>
