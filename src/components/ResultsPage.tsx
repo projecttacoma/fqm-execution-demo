@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { HTML } from '../App';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { measureFileState, patientFileState } from '../state';
+import { htmlsState, measureFileState, patientFileState } from '../state';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Results from './Results';
@@ -15,7 +14,7 @@ const useStyles = makeStyles({
 
 const ResultsPage: React.FC = () => {
   const styles = useStyles();
-  const [htmls] = useState<HTML[]>([]);
+  const htmls = useRecoilValue(htmlsState);
   const measureFile = useRecoilValue(measureFileState);
   const patientFile = useRecoilValue(patientFileState);
   const history = useHistory();

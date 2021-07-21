@@ -4,3 +4,4 @@ export * from './measurementPeriod';
 export * from './bundles';
 export * from './dropdowns';
 export * from './results';
+export * from './htmls';
