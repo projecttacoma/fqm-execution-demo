@@ -19,7 +19,7 @@
     "@types/react-dom": "^16.9.8",
     "date-fns": "^2.16.1",
     "fhirpath": "^2.9.0",
-    "fqm-execution": "git+https://github.com/projecttacoma/fqm-execution.git",
+    "fqm-execution": "^0.4.0",
     "html-react-parser": "^1.1.1",
     "js-file-download": "^0.4.12",
     "material-ui-dropzone": "^3.5.0",
