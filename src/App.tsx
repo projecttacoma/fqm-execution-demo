@@ -101,8 +101,6 @@ export default function App() {
       }
     } else if (outputType === 'detailedResults') {
       if (measureFile.content && patientFile.content) {
-        console.log(measureFile.content);
-        console.log(patientFile.content);
         const { results } = await Calculator.calculate(measureFile.content, [patientFile.content], options);
         setResults(results);
         let html: HTML[] = [];
@@ -133,9 +131,6 @@ export default function App() {
       }
     } else if (outputType === 'gapsInCare') {
       if (measureFile.content && patientFile.content) {
-        console.log(options);
-        console.log(measureFile.content);
-        console.log(patientFile.content);
         const { results } = await Calculator.calculateGapsInCare(measureFile.content, [patientFile.content], options);
         if (calculationOptions.calculateHTML) {
           const measureReportEntry = results.entry?.find(e => e.resource?.resourceType === 'MeasureReport');
