@@ -62,7 +62,7 @@ const Results: React.FC<Props> = ({ measureFile, htmls }) => {
                   key={detectedIssueId}
                 >
                   <h3>Detected Issue</h3>
-                  <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Responses</h4>
+                  <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Response(s)</h4>
                   <DetectedIssueResources detectedIssue={issue} />
                 </Grid>
               );
