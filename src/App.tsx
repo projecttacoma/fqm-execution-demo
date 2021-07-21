@@ -19,7 +19,6 @@ import {
   patientFileState,
   resultsState
 } from './state';
-import Results from './components/Results';
 import { Collapse } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,7 +61,7 @@ export default function App() {
   const classes = useStyles();
 
   const setResults = useSetRecoilState(resultsState);
-  const [htmls, setHTMLs] = useState<HTML[]>([]);
+  const [, setHTMLs] = useState<HTML[]>([]);
   const [hasError, setHasError] = useState(null);
 
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);

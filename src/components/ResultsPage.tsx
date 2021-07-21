@@ -21,8 +21,10 @@ const ResultsPage: React.FC = () => {
   const history = useHistory();
   return (
     <div className={styles.root}>
+      <Button variant="contained" onClick={() => history.push('/fqm-execution-demo')}>
+        Home
+      </Button>
       <Results measureFile={measureFile} patientFile={patientFile} htmls={htmls} />
-      <Button onClick={() => history.push('/fqm-execution-demo')}>Home</Button>
     </div>
   );
 };
