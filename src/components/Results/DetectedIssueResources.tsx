@@ -12,14 +12,15 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
 
   return (
     <div>
-      {guidanceResponseArray.map((response: R4.IGuidanceResponse) => {
+      {guidanceResponseArray.map((response: R4.IGuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
         return (
           <Accordion key={guidanceResponseId}>
             <AccordionSummary>
               <Grid item xs>
                 <h4>
-                  {fhirpath.evaluate(response, 'resourceType')} {guidanceResponseId}{' '}
+                  {fhirpath.evaluate(response, 'resourceType')} {index + 1} (
+                  {fhirpath.evaluate(response, 'reasonCode.coding.code')})
                 </h4>
               </Grid>
             </AccordionSummary>
