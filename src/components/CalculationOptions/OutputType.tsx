@@ -20,10 +20,10 @@ function OutputTypeButtons() {
   return (
     <FormControl component="fieldset">
       <RadioGroup name="type" value={outputType} onChange={handleChange}>
+        <FormControlLabel control={<Radio color="primary" />} value="gapsInCare" label="Gaps In Care" />
         <FormControlLabel control={<Radio color="primary" />} value="rawResults" label="Raw" />
         <FormControlLabel control={<Radio color="primary" />} value="detailedResults" label="Detailed" />
         <FormControlLabel control={<Radio color="primary" />} value="measureReports" label="Measure Reports" />
-        <FormControlLabel control={<Radio color="primary" />} value="gapsInCare" label="Gaps In Care" />
       </RadioGroup>
     </FormControl>
   );

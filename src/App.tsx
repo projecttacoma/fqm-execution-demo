@@ -68,7 +68,7 @@ export default function App() {
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
   const [patientFile, setPatientFile] = useRecoilState(patientFileState);
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
-  const outputType = useRecoilValue(outputTypeState);
+  const [outputType, setOutputType] = useRecoilState(outputTypeState);
   const measurementPeriod = useRecoilValue(measurementPeriodState);
 
   const history = useHistory();
@@ -163,8 +163,11 @@ export default function App() {
     });
     setCalculationOptions({
       calculateHTML: false,
-      calculateSDEs: false
+      calculateSDEs: false,
+      reportType: 'individual'
     });
+    setOutputType('gapsInCare');
+
     setResults(null);
     setHTMLs([]);
     setHasError(null);
