@@ -13,10 +13,8 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponseArray = [];
 
   for (let i = 0; i < guidanceResponses.length; i++) {
-    if (
-      fhirpath.evaluate(guidanceResponses[i], 'reasonCode.coding.code') === Enums.CareGapReasonCode.MISSING ||
-      fhirpath.evaluate(guidanceResponses[i], 'reasonCode.coding.code') === Enums.CareGapReasonCode.PRESENT
-    ) {
+    const reasonCode = fhirpath.evaluate(guidanceResponses[i], 'reasonCode.coding.code')[0];
+    if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
       guidanceResponseArray.push(guidanceResponses[i]);
     } else {
       guidanceResponseArray.unshift(guidanceResponses[i]);
