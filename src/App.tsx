@@ -167,6 +167,7 @@ export default function App() {
     });
     setResults(null);
     setHTMLs([]);
+    setHasError(null);
   };
 
   return (
