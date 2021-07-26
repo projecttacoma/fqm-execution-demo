@@ -26,18 +26,18 @@ function MeasurementPeriodDatePicker() {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <h3>Measurement Start: </h3>
-      <DatePicker 
-      value={measurementPeriod.measurementPeriodStart} 
-      format="MM/dd/yyyy" 
-      onChange={setStart} 
-      disabled={outputType === 'dataRequirement'}
+      <DatePicker
+        value={measurementPeriod.measurementPeriodStart}
+        format="MM/dd/yyyy"
+        onChange={setStart}
+        disabled={outputType === 'dataRequirement'}
       />
       <h3>Measurement End: </h3>
-      <DatePicker 
-      value={measurementPeriod.measurementPeriodEnd} 
-      format="MM/dd/yyyy" 
-      onChange={setEnd} 
-      disabled={outputType === 'dataRequirement'}
+      <DatePicker
+        value={measurementPeriod.measurementPeriodEnd}
+        format="MM/dd/yyyy"
+        onChange={setEnd}
+        disabled={outputType === 'dataRequirement'}
       />
     </MuiPickersUtilsProvider>
   );
