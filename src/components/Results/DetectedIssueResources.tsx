@@ -37,7 +37,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container item xs direction="row">
-                <Grid container xs={6} direction="column">
+                <Grid container item xs={6} direction="column">
                   <Grid item xs>
                     <h4>dataRequirement:</h4>
                   </Grid>
@@ -59,7 +59,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                   <Grid item xs>
                     {fhirpath.evaluate(response, 'dataRequirement.codeFilter.code.code').map((code: string) => {
                       return (
-                        <Grid item xs>
+                        <Grid item xs key={code}>
                           code: {code}
                         </Grid>
                       );
