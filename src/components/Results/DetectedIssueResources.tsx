@@ -10,16 +10,16 @@ interface Props {
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
-  const guidanceResponseArray = [];
+  const guidanceResponseArray: any[] = [];
 
-  for (let i = 0; i < guidanceResponses.length; i++) {
-    const reasonCode = fhirpath.evaluate(guidanceResponses[i], 'reasonCode.coding.code')[0];
+  guidanceResponses.forEach((element: any) => {
+    const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
     if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
-      guidanceResponseArray.push(guidanceResponses[i]);
+      guidanceResponseArray.push(element);
     } else {
-      guidanceResponseArray.unshift(guidanceResponses[i]);
+      guidanceResponseArray.unshift(element);
     }
-  }
+  });
 
   return (
     <div>
