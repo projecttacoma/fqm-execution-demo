@@ -10,7 +10,8 @@ import {
   measureFileState,
   patientDropdownOptionsState,
   patientFileState,
-  resultsState
+  resultsState,
+  outputTypeState
 } from '../../state';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -75,6 +76,7 @@ export function PatientDropdown() {
   const measureFile = useRecoilValue(measureFileState);
   const patientOptions = useRecoilValue(patientDropdownOptionsState);
   const setResults = useSetRecoilState(resultsState);
+  const outputType = useRecoilValue(outputTypeState);
 
   const onPatientDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setResults(null);
@@ -99,7 +101,7 @@ export function PatientDropdown() {
         <Select
           value={patientFile.name || ''}
           onChange={onPatientDropdownChange}
-          disabled={patientFile.content !== null && patientFile.fromFileUpload === true}
+          disabled={(patientFile.content !== null && patientFile.fromFileUpload === true) || (outputType === 'dataRequirement')}
         >
           {patientOptions.map(option => (
             <MenuItem key={option} value={option}>

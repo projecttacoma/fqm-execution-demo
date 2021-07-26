@@ -149,6 +149,11 @@ export default function App() {
 
         setResults(results);
       }
+    } else if (outputType === 'dataRequirement') {
+      if (measureFile.content && !patientFile.content) {
+        const { results } = Calculator.calculateDataRequirements(measureFile.content);
+        setResults(results);
+      }
     }
   };
 
@@ -208,7 +213,7 @@ export default function App() {
             color="primary"
             onClick={onCalculateButtonClick}
             className={classes.buttons}
-            disabled={measureFile.content === null || patientFile.content === null}
+            disabled={measureFile.content === null || (patientFile.content === null && outputType !== 'dataRequirement')}
           >
             Calculate
           </Button>
