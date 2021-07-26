@@ -1,6 +1,7 @@
 import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from '@material-ui/core';
 import { R4 } from '@ahryman40k/ts-fhir-types';
+import { Enums } from 'fqm-execution';
 import fhirpath from 'fhirpath';
 
 interface Props {
@@ -8,7 +9,17 @@ interface Props {
 }
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
-  const guidanceResponseArray = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
+  const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
+  const guidanceResponseArray: R4.IGuidanceResponse[] = [];
+
+  guidanceResponses.forEach((element: R4.IGuidanceResponse) => {
+    const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
+    if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
+      guidanceResponseArray.push(element);
+    } else {
+      guidanceResponseArray.unshift(element);
+    }
+  });
 
   return (
     <div>
@@ -26,7 +37,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container item xs direction="row">
-                <Grid container xs={6} direction="column">
+                <Grid container item xs={6} direction="column">
                   <Grid item xs>
                     <h4>dataRequirement:</h4>
                   </Grid>
@@ -48,7 +59,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                   <Grid item xs>
                     {fhirpath.evaluate(response, 'dataRequirement.codeFilter.code.code').map((code: string) => {
                       return (
-                        <Grid item xs>
+                        <Grid item xs key={code}>
                           code: {code}
                         </Grid>
                       );
