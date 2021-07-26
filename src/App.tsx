@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import 'date-fns';
 import './index.css';
-import Grid from '@material-ui/core/Grid';
+import { Grid, IconButton } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import { Close } from '@material-ui/icons';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useHistory } from 'react-router-dom';
 import {
   calculationOptionsState,
   measureFileState,
   measurementPeriodState,
   outputTypeState,
   patientFileState,
-  resultsState
+  resultsState,
+  htmlsState
 } from './state';
-import Results from './components/Results';
+import { Collapse } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,6 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     buttons: {
       margin: '4px'
+    },
+    resultsButton: {
+      backgroundColor: '#7FFF00'
     }
   })
 );
@@ -55,13 +62,27 @@ export default function App() {
   const classes = useStyles();
 
   const setResults = useSetRecoilState(resultsState);
-  const [htmls, setHTMLs] = useState<HTML[]>([]);
+  const [, setHTMLs] = useRecoilState(htmlsState);
+  const [hasError, setHasError] = useState(null);
 
   const [measureFile, setMeasureFile] = useRecoilState(measureFileState);
   const [patientFile, setPatientFile] = useRecoilState(patientFileState);
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
-  const outputType = useRecoilValue(outputTypeState);
+  const [outputType, setOutputType] = useRecoilState(outputTypeState);
   const measurementPeriod = useRecoilValue(measurementPeriodState);
+
+  const history = useHistory();
+
+  //Function to wrap the calculate function and catch errors in fqm-execution
+  const onCalculateButtonClick = async () => {
+    try {
+      await calculate();
+      history.push('/results');
+    } catch (error) {
+      setHasError(error.message);
+      console.error(error);
+    }
+  };
 
   const calculate = async () => {
     const options: CalculatorTypes.CalculationOptions = {
@@ -112,7 +133,6 @@ export default function App() {
     } else if (outputType === 'gapsInCare') {
       if (measureFile.content && patientFile.content) {
         const { results } = await Calculator.calculateGapsInCare(measureFile.content, [patientFile.content], options);
-
         if (calculationOptions.calculateHTML) {
           const measureReportEntry = results.entry?.find(e => e.resource?.resourceType === 'MeasureReport');
 
@@ -143,14 +163,30 @@ export default function App() {
     });
     setCalculationOptions({
       calculateHTML: false,
-      calculateSDEs: false
+      calculateSDEs: false,
+      reportType: 'individual'
     });
+    setOutputType('gapsInCare');
+
     setResults(null);
     setHTMLs([]);
+    setHasError(null);
   };
 
   return (
     <div className={classes.root}>
+      <Collapse in={hasError !== null}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton size="small" onClick={() => setHasError(null)}>
+              <Close />
+            </IconButton>
+          }
+        >
+          {hasError}
+        </Alert>
+      </Collapse>
       <Grid>
         <h1 id="header">FQM Execution Demo</h1>
         <Grid container justify="space-evenly">
@@ -170,14 +206,13 @@ export default function App() {
           <Button
             variant="contained"
             color="primary"
-            onClick={calculate}
+            onClick={onCalculateButtonClick}
             className={classes.buttons}
             disabled={measureFile.content === null || patientFile.content === null}
           >
             Calculate
           </Button>
         </Grid>
-        <Results measureFile={measureFile} htmls={htmls} />
       </Grid>
     </div>
   );
