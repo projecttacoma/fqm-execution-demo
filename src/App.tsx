@@ -213,7 +213,9 @@ export default function App() {
             color="primary"
             onClick={onCalculateButtonClick}
             className={classes.buttons}
-            disabled={measureFile.content === null || (patientFile.content === null && outputType !== 'dataRequirement')}
+            disabled={
+              measureFile.content === null || (patientFile.content === null && outputType !== 'dataRequirement')
+            }
           >
             Calculate
           </Button>

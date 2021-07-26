@@ -101,7 +101,9 @@ export function PatientDropdown() {
         <Select
           value={patientFile.name || ''}
           onChange={onPatientDropdownChange}
-          disabled={(patientFile.content !== null && patientFile.fromFileUpload === true) || (outputType === 'dataRequirement')}
+          disabled={
+            (patientFile.content !== null && patientFile.fromFileUpload === true) || outputType === 'dataRequirement'
+          }
         >
           {patientOptions.map(option => (
             <MenuItem key={option} value={option}>
