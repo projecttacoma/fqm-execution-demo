@@ -10,9 +10,9 @@ interface Props {
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
-  const guidanceResponseArray: any[] = [];
+  const guidanceResponseArray: R4.IGuidanceResponse[] = [];
 
-  guidanceResponses.forEach((element: any) => {
+  guidanceResponses.forEach((element: R4.IGuidanceResponse) => {
     const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
     if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
       guidanceResponseArray.push(element);
