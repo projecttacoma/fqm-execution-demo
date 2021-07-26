@@ -1,8 +1,8 @@
 import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { measurementPeriodState, outputTypeState } from '../../state';
+import { useRecoilState } from 'recoil';
+import { measurementPeriodState } from '../../state';
 
 function MeasurementPeriodDatePicker() {
   const [measurementPeriod, setMeasurementPeriod] = useRecoilState(measurementPeriodState);
