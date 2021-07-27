@@ -34,78 +34,76 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
   const detectedIssues = fhirpath.evaluate(results, 'Bundle.entry.resource.DetectedIssue');
 
   return (
-    <Grid container>
-      <Grid container item xs={12} direction="column" spacing={2}>
-        <h2>Results:</h2>
-        <Grid container item xs={12} direction="row" justify="center" alignItems="center">
-          {outputType === 'measureReports' &&
-            calculationOptions.reportType === 'individual' &&
-            fhirpath.evaluate(results, 'MeasureReport.group').map((group: R4.IMeasureReport_Group) => {
-              const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
-              return (
-                <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={group.id}>
-                  <h2>{group.id} Population Results</h2>
-                  <PopulationResults key={group.id} results={group} id={id} />
-                </Grid>
-              );
-            })}
-          {results &&
-            detectedIssues.map((issue: R4.IDetectedIssue, index: number) => {
-              const detectedIssueId = fhirpath.evaluate(issue, 'id');
-              return (
-                <Grid
-                  container
-                  item
-                  xs={12}
-                  direction="column"
-                  justify="center"
-                  alignItems="center"
-                  key={detectedIssueId}
-                >
-                  <h3>Detected Issue {index + 1}</h3>
-                  <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Response(s)</h4>
-                  <DetectedIssueResources detectedIssue={issue} />
-                </Grid>
-              );
-            })}
-        </Grid>
-        <Grid container item xs={12} direction="row">
-          <Grid item xs>
-            <Grid container item xs direction="row">
-              {results && <h2>JSON:</h2>}
-              {results && (
-                <IconButton
-                  onClick={() => {
-                    fileDownload(
-                      JSON.stringify(results, null, 2),
-                      measureFile.name?.includes('.json')
-                        ? `results-${measureFile.name}`
-                        : `results-${measureFile.name}.json`
-                    );
-                  }}
-                >
-                  <GetApp fontSize="small" />
-                </IconButton>
-              )}
-            </Grid>
-            {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
-            {patientFile && <h2>Patient Bundle:</h2>}
-            {patientFile && (
-              <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+    <Grid container xs={12} direction="column" spacing={2}>
+      <h2>Results:</h2>
+      <Grid container item xs={12} direction="row" justify="center" alignItems="center">
+        {outputType === 'measureReports' &&
+          calculationOptions.reportType === 'individual' &&
+          fhirpath.evaluate(results, 'MeasureReport.group').map((group: R4.IMeasureReport_Group) => {
+            const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
+            return (
+              <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={group.id}>
+                <h2>{group.id} Population Results</h2>
+                <PopulationResults key={group.id} results={group} id={id} />
+              </Grid>
+            );
+          })}
+        {results &&
+          detectedIssues.map((issue: R4.IDetectedIssue, index: number) => {
+            const detectedIssueId = fhirpath.evaluate(issue, 'id');
+            return (
+              <Grid
+                container
+                item
+                xs={12}
+                direction="column"
+                justify="center"
+                alignItems="center"
+                key={detectedIssueId}
+              >
+                <h3>Detected Issue {index + 1}</h3>
+                <h4>{fhirpath.evaluate(issue, 'contained.GuidanceResponse').length} Guidance Response(s)</h4>
+                <DetectedIssueResources detectedIssue={issue} />
+              </Grid>
+            );
+          })}
+      </Grid>
+      <Grid container item xs={12} direction="row">
+        <Grid item xs>
+          <Grid container item xs direction="row">
+            {results && <h2>JSON:</h2>}
+            {results && (
+              <IconButton
+                onClick={() => {
+                  fileDownload(
+                    JSON.stringify(results, null, 2),
+                    measureFile.name?.includes('.json')
+                      ? `results-${measureFile.name}`
+                      : `results-${measureFile.name}.json`
+                  );
+                }}
+              >
+                <GetApp fontSize="small" />
+              </IconButton>
             )}
           </Grid>
-          <Grid item xs>
-            {results &&
-              htmls &&
-              htmls.map(html => {
-                return (
-                  <div key={html.groupId} className={classes.highlightedMarkup}>
-                    <h2>HTML:</h2>
-                    {parse(html.html)}
-                  </div>
-                );
-              })}
-          </Grid>
+          {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
+          {patientFile && <h2>Patient Bundle:</h2>}
+          {patientFile && (
+            <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+          )}
+        </Grid>
+        <Grid item xs>
+          {results &&
+            htmls &&
+            htmls.map(html => {
+              return (
+                <div key={html.groupId} className={classes.highlightedMarkup}>
+                  <h2>HTML:</h2>
+                  {parse(html.html)}
+                </div>
+              );
+            })}
         </Grid>
       </Grid>
     </Grid>
