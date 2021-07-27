@@ -77,8 +77,8 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
             </IconButton>
           )}
           {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
-          {patientFile && <h2>Patient Bundle:</h2>}
-          {patientFile && (
+          {patientFile && outputType !== 'dataRequirement' && <h2>Patient Bundle:</h2>}
+          {patientFile && outputType !== 'dataRequirement' && (
             <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
           )}
         </Grid>

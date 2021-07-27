@@ -150,7 +150,7 @@ export default function App() {
         setResults(results);
       }
     } else if (outputType === 'dataRequirement') {
-      if (measureFile.content && !patientFile.content) {
+      if (measureFile.content) {
         const { results } = Calculator.calculateDataRequirements(measureFile.content);
         setResults(results);
       }
