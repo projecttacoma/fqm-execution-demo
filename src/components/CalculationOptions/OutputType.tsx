@@ -11,7 +11,7 @@ function OutputTypeButtons() {
   const [calculationOptions, setCalculationOptions] = useRecoilState(calculationOptionsState);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value;
-    if (value === 'gapsInCare') {
+    if (value === 'gapsInCare' || value === 'detailedResults') {
       setCalculationOptions({ ...calculationOptions, reportType: 'individual' });
     }
     setOutputType(value);
