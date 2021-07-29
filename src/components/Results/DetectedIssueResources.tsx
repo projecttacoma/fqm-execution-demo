@@ -1,5 +1,6 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, Grid, Link, Typography, withStyles } from '@material-ui/core';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
 import fhirpath from 'fhirpath';
@@ -7,6 +8,14 @@ import fhirpath from 'fhirpath';
 interface Props {
   detectedIssue: R4.IDetectedIssue;
 }
+
+const AccordionSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)'
+  },
+  expanded: {}
+})(MuiAccordionSummary);
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
@@ -29,6 +38,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
         const endDate = new Date(fhirpath.evaluate(response, 'dataRequirement.dateFilter.valuePeriod.end'));
         const codeFilterPath1 = fhirpath.evaluate(response, 'dataRequirement.codeFilter.path[0]');
         const codeFilterPath2 = fhirpath.evaluate(response, 'dataRequirement.codeFilter.path[1]');
+        const link = 'http://hl7.org/fhir/';
 
         return (
           <Accordion key={guidanceResponseId}>
@@ -46,20 +56,33 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                   <Grid item xs>
                     <h4>Requirements:</h4>
                   </Grid>
-                  <Grid item xs>
-                    Type: {fhirpath.evaluate(response, 'dataRequirement.type')}
+                  <Grid item xs direction="row">
+                    <Grid item xs>
+                      Type:{' '}
+                      <Link href={link.concat(fhirpath.evaluate(response, 'dataRequirement.type'))}>
+                        {fhirpath.evaluate(response, 'dataRequirement.type')}
+                      </Link>
+                    </Grid>
                   </Grid>
                   <Grid item xs>
                     <h4>Codes:</h4>
-                    <h5>{codeFilterPath1[0].charAt(0).toUpperCase()}{codeFilterPath1[0].slice(1)}:</h5>
+                    <h5>
+                      {codeFilterPath1[0].charAt(0).toUpperCase()}
+                      {codeFilterPath1[0].slice(1)}:
+                    </h5>
                   </Grid>
                   <Grid item xs>
-                    <Typography style={{ overflowWrap: 'break-word' }}> 
-                      {fhirpath.evaluate(response, 'dataRequirement.codeFilter.valueSet')}
+                    <Typography style={{ overflowWrap: 'break-word' }}>
+                      <Link href={fhirpath.evaluate(response, 'dataRequirement.codeFilter.valueSet')}>
+                        {fhirpath.evaluate(response, 'dataRequirement.codeFilter.valueSet')}
+                      </Link>
                     </Typography>
                   </Grid>
                   <Grid item xs>
-                  <h5>{codeFilterPath2[0].charAt(0).toUpperCase()}{codeFilterPath2[0].slice(1)}:</h5>
+                    <h5>
+                      {codeFilterPath2[0].charAt(0).toUpperCase()}
+                      {codeFilterPath2[0].slice(1)}:
+                    </h5>
                   </Grid>
                   <Grid item xs>
                     {fhirpath.evaluate(response, 'dataRequirement.codeFilter.code.code').map((code: string) => {
@@ -71,27 +94,23 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                     })}
                   </Grid>
                   <Grid item xs>
-                    <h5>Dates:</h5>
-                  </Grid>
-                  <Grid item xs>
-                    {fhirpath.evaluate(response, 'dataRequirement.dateFilter.path')}
+                    <h4>Dates:</h4>
+                    <h5>{fhirpath.evaluate(response, 'dataRequirement.dateFilter.path')}:</h5>
                   </Grid>
                   <Grid item xs>
                     {startDate.toDateString()}-{endDate.toDateString()}
                   </Grid>
                 </Grid>
-                <Grid container xs direction="column" justify="flex-start" alignContent="flex-start">
+                <Grid container xs direction="column">
                   <Grid item xs>
                     <h4>Reason(s):</h4>
-                  </Grid>
-                  <Grid item xs>
                     {fhirpath.evaluate(response, 'reasonCode').map((reason: R4.IGuidanceResponse) => {
-                        return (
-                          <Grid item xs key={fhirpath.evaluate(reason, 'coding.code')}>
-                            - {fhirpath.evaluate(reason, 'coding.code')} ({fhirpath.evaluate(reason, 'coding.display')})
-                          </Grid>
-                        );
-                      })}
+                      return (
+                        <Grid item xs key={fhirpath.evaluate(reason, 'coding.code')}>
+                          - {fhirpath.evaluate(reason, 'coding.code')} ({fhirpath.evaluate(reason, 'coding.display')})
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Grid>
               </Grid>
