@@ -120,7 +120,7 @@ export default function App() {
         const mrResults = await Calculator.calculateMeasureReports(measureFile.content, [patientFile.content], options);
         const mrs = mrResults.results;
 
-        if (calculationOptions.calculateHTML) {
+        if (calculationOptions.calculateHTML && calculationOptions.reportType === 'individual') {
           const htmls: HTML[] = (Array.isArray(mrs) ? mrs : [mrs]).map(m => ({
             groupId: m.id || '',
             html: m.text?.div || ''

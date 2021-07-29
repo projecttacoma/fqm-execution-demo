@@ -21,7 +21,11 @@ function CalculationOptionsButtons() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={outputType !== 'rawResults' && calculationOptions.calculateSDEs}
+            checked={
+              outputType !== 'rawResults' &&
+              calculationOptions.reportType !== 'summary' &&
+              calculationOptions.calculateSDEs
+            }
             onChange={handleChange}
             disabled={
               outputType === 'rawResults' ||
@@ -36,7 +40,11 @@ function CalculationOptionsButtons() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={outputType !== 'rawResults' && calculationOptions.calculateHTML}
+            checked={
+              outputType !== 'rawResults' &&
+              calculationOptions.reportType !== 'summary' &&
+              calculationOptions.calculateHTML
+            }
             onChange={handleChange}
             disabled={
               outputType === 'rawResults' ||
