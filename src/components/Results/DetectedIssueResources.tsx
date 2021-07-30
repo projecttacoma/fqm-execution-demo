@@ -35,8 +35,6 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
       {guidanceResponseArray.map((response: R4.IGuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
         const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
-        const startDate = new Date(fhirpath.evaluate(response, 'dataRequirement.dateFilter.valuePeriod.start'));
-        const endDate = new Date(fhirpath.evaluate(response, 'dataRequirement.dateFilter.valuePeriod.end'));
         const link = 'http://hl7.org/fhir/';
         const valueSetObj = codeFilters.find((cf: any) => cf.valueSet);
         const codeFilterArray = codeFilters.filter((cf: any) => !!!cf.valueSet);
@@ -76,9 +74,10 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                   </Grid>
                   <Grid item xs>
                     {codeFilterArray.map((cf: any) => {
+                      const path = fhirpath.evaluate(cf, 'path');
                       return (
-                        <Grid item xs key={fhirpath.evaluate(cf, 'path')[0]}>
-                          <h5>{fhirpath.evaluate(cf, 'path')[0]}:</h5>
+                        <Grid item xs key={path}>
+                          <h5>{path}:</h5>
                           <Grid item xs>
                             {fhirpath.evaluate(cf, 'code.code').map((code: string) => {
                               return (
@@ -94,10 +93,19 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                   </Grid>
                   <Grid item xs>
                     <h4>Dates:</h4>
-                    <h5>{fhirpath.evaluate(response, 'dataRequirement.dateFilter.path')}:</h5>
-                  </Grid>
-                  <Grid item xs>
-                    {startDate.toDateString()} - {endDate.toDateString()}
+                    {fhirpath.evaluate(response, 'dataRequirement.dateFilter').map((df: any) => {
+                      const path = fhirpath.evaluate(df, 'path');
+                      const startDate = new Date(fhirpath.evaluate(df, 'valuePeriod.start'));
+                      const endDate = new Date(fhirpath.evaluate(df, 'valuePeriod.end'));
+                      return (
+                        <Grid item xs key={path}>
+                          <h5>{fhirpath.evaluate(df, 'path')}:</h5>
+                          <Grid item xs>
+                            {startDate.toDateString()} - {endDate.toDateString()}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Grid>
                 <Grid container item xs direction="column">
