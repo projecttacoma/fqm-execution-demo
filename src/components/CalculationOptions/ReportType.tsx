@@ -23,14 +23,14 @@ function ReportTypeButtons() {
         <FormControlLabel
           control={<Radio color="primary" />}
           value="individual"
-          checked={calculationOptions.reportType === 'individual' ?? false}
+          checked={outputType === 'measureReports' && (calculationOptions.reportType === 'individual' ?? false)}
           label="Individual"
           disabled={outputType !== 'measureReports'}
         />
         <FormControlLabel
           control={<Radio color="primary" />}
           value="summary"
-          checked={calculationOptions.reportType === 'summary' ?? false}
+          checked={outputType === 'measureReports' && (calculationOptions.reportType === 'summary' ?? false)}
           label="Summary"
           disabled={outputType !== 'measureReports'}
         />

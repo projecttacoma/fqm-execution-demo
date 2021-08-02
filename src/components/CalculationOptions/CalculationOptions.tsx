@@ -16,17 +16,38 @@ function CalculationOptionsButtons() {
     });
   };
 
+  const shouldCheckSDE = () => {
+    return (
+      outputType !== 'rawResults' && calculationOptions.reportType === 'individual' && calculationOptions.calculateSDEs
+    );
+  };
+
+  const shouldDisableSDE = () => {
+    return (
+      outputType === 'rawResults' || (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+    );
+  };
+
+  const shouldCheckHTML = () => {
+    return (
+      outputType !== 'rawResults' && calculationOptions.reportType !== 'summary' && calculationOptions.calculateHTML
+    );
+  };
+
+  const shouldDisableHTML = () => {
+    return (
+      outputType === 'rawResults' || (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+    );
+  };
+
   return (
     <FormGroup>
       <FormControlLabel
         control={
           <Checkbox
-            checked={outputType !== 'rawResults' && calculationOptions.calculateSDEs}
+            checked={shouldCheckSDE()}
             onChange={handleChange}
-            disabled={
-              outputType === 'rawResults' ||
-              (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
-            }
+            disabled={shouldDisableSDE()}
             name="calculateSDEs"
             color="primary"
           />
@@ -36,12 +57,9 @@ function CalculationOptionsButtons() {
       <FormControlLabel
         control={
           <Checkbox
-            checked={outputType !== 'rawResults' && calculationOptions.calculateHTML}
+            checked={shouldCheckHTML()}
             onChange={handleChange}
-            disabled={
-              outputType === 'rawResults' ||
-              (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
-            }
+            disabled={shouldDisableHTML()}
             name="calculateHTML"
             color="primary"
           />
