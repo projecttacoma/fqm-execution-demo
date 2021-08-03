@@ -1,5 +1,6 @@
-import { makeStyles, Grid, IconButton, AppBar, Tab, Tabs } from '@material-ui/core';
-import { TabContext, TabPanel } from '@material-ui/lab';
+import { makeStyles, Grid, IconButton, AppBar, Tab, Tabs, Toolbar } from '@material-ui/core';
+import TabPanel from '@material-ui/lab/TabPanel';
+import TabContext from '@material-ui/lab/TabContext';
 import ReactJson from 'react-json-view';
 import parse from 'html-react-parser';
 import fileDownload from 'js-file-download';
@@ -12,12 +13,19 @@ import { useRecoilValue } from 'recoil';
 import { calculationOptionsState, outputTypeState, resultsState } from '../../state';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import fhirpath from 'fhirpath';
+import Button from '@material-ui/core/Button';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
   highlightedMarkup: {
     '& pre': {
       whiteSpace: 'pre-wrap'
     }
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    display: 'flex',
+    paddingTop: '24px'
   }
 }));
 
@@ -34,20 +42,25 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
   const results = useRecoilValue(resultsState);
   const detectedIssues = fhirpath.evaluate(results, 'Bundle.entry.resource.DetectedIssue');
 
-  const style = {
-    minWidth: '25%'
+  enum TabValues {
+    JSON = '0',
+    HTML = '1',
+    TABULAR = '2',
+    ACCORDION = '3'
+  }
+
+  const [selectedTab, setSelectedTab] = React.useState(TabValues.JSON);
+
+  const handleChange = (event: React.ChangeEvent<{}>, newTab: TabValues) => {
+    setSelectedTab(newTab);
   };
 
-  const [value, setValue] = React.useState('0');
-
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setValue(newValue);
-  };
+  const history = useHistory();
 
   const displayJSONResults = () => {
     return (
       <>
-        <Grid container item xs direction="row">
+        <Grid container item xs direction="column" justify="center" alignItems="center">
           {results && <h2>JSON:</h2>}
           {results && (
             <IconButton
@@ -63,12 +76,12 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
               <GetApp fontSize="small" />
             </IconButton>
           )}
+          {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
+          {patientFile && <h2>Patient Bundle:</h2>}
+          {patientFile && (
+            <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
+          )}
         </Grid>
-        {results && <ReactJson src={results} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />}
-        {patientFile && <h2>Patient Bundle:</h2>}
-        {patientFile && (
-          <ReactJson src={patientFile} enableClipboard={true} theme="shapeshifter:inverted" collapsed={2} />
-        )}
       </>
     );
   };
@@ -144,40 +157,34 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
     return outputType === 'measureReports' && calculationOptions.reportType === 'individual';
   };
 
-  const shouldDisplayTabs = () => {
-    return shouldDisplayHTML() || shouldDisplayAccordion() || shouldDisplayTabular();
-  };
-
   return (
-    <Grid container xs={12} direction="column" spacing={2}>
-      <h2>Results:</h2>{' '}
-      {shouldDisplayTabs() ? (
-        <TabContext value={value}>
-          <AppBar position="static">
-            <Tabs
-              TabIndicatorProps={{ style: { background: 'white' } }}
-              aria-label="results tabs"
-              onChange={handleChange}
-              value={value}
-              indicatorColor="primary"
-              centered
-            >
-              <Tab style={style} label="Raw JSON" value="0" />
-              {shouldDisplayHTML() && <Tab style={style} label="Highlighted HTML" value="1" />}
-              {shouldDisplayTabular() && <Tab style={style} label="Tabular" value="2" />}
-              {shouldDisplayAccordion() && <Tab style={style} label="Accordion" value="3" />}
-            </Tabs>
-          </AppBar>
-
-          <TabPanel value="0">{displayJSONResults()}</TabPanel>
-          {shouldDisplayHTML() && <TabPanel value="1">{displayHTMLResults()}</TabPanel>}
-          {shouldDisplayTabular() && <TabPanel value="2">{displayTabularResults()}</TabPanel>}
-          {shouldDisplayAccordion() && <TabPanel value="3">{displayAccordionResults()}</TabPanel>}
-        </TabContext>
-      ) : (
-        displayJSONResults()
-      )}
-    </Grid>
+    <TabContext value={selectedTab}>
+      <AppBar position="static">
+        <Tabs
+          TabIndicatorProps={{ style: { background: 'white' } }}
+          aria-label="results tabs"
+          onChange={handleChange}
+          value={selectedTab}
+          indicatorColor="primary"
+          variant="fullWidth"
+          centered
+        >
+          <Tab label="Raw JSON" value={TabValues.JSON} />
+          {shouldDisplayHTML() && <Tab label="Highlighted HTML" value={TabValues.HTML} />}
+          {shouldDisplayTabular() && <Tab label="Tabular" value={TabValues.TABULAR} />}
+          {shouldDisplayAccordion() && <Tab label="Accordion" value={TabValues.ACCORDION} />}
+        </Tabs>
+      </AppBar>
+      <div className={classes.buttonContainer}>
+        <Button variant="contained" onClick={() => history.push('/fqm-execution-demo')}>
+          Home
+        </Button>
+      </div>
+      <TabPanel value={TabValues.JSON}>{displayJSONResults()}</TabPanel>
+      {shouldDisplayHTML() && <TabPanel value={TabValues.HTML}>{displayHTMLResults()}</TabPanel>}
+      {shouldDisplayTabular() && <TabPanel value={TabValues.TABULAR}>{displayTabularResults()}</TabPanel>}
+      {shouldDisplayAccordion() && <TabPanel value={TabValues.ACCORDION}>{displayAccordionResults()}</TabPanel>}
+    </TabContext>
   );
 };
 
