@@ -37,7 +37,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
         const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
         const link = 'http://hl7.org/fhir/';
         const valueSetObj = codeFilters.find((cf: any) => cf.valueSet);
-        const codeFilterArray = codeFilters.filter((cf: any) => !!!cf.valueSet);
+        const codeFilterArray = codeFilters.filter((cf: any) => !cf.valueSet);
 
         return (
           <Accordion key={guidanceResponseId}>
@@ -95,13 +95,14 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                     <h4>Dates:</h4>
                     {fhirpath.evaluate(response, 'dataRequirement.dateFilter').map((df: any) => {
                       const path = fhirpath.evaluate(df, 'path');
-                      const startDate = new Date(fhirpath.evaluate(df, 'valuePeriod.start'));
-                      const endDate = new Date(fhirpath.evaluate(df, 'valuePeriod.end'));
+                      const startDate = new Date(fhirpath.evaluate(df, 'valuePeriod.start')).toDateString();
+                      const endDate = new Date(fhirpath.evaluate(df, 'valuePeriod.end')).toDateString();
                       return (
                         <Grid item xs key={path}>
                           <h5>{fhirpath.evaluate(df, 'path')}:</h5>
                           <Grid item xs>
-                            {startDate.toDateString()} - {endDate.toDateString()}
+                            {startDate === 'Invalid Date' ? 'any' : startDate} -{' '}
+                            {endDate === 'Invalid Date' ? 'any' : endDate}
                           </Grid>
                         </Grid>
                       );
