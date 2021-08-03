@@ -1,5 +1,6 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Grid, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, Grid, Link, Typography, withStyles } from '@material-ui/core';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
 import fhirpath from 'fhirpath';
@@ -7,6 +8,14 @@ import fhirpath from 'fhirpath';
 interface Props {
   detectedIssue: R4.IDetectedIssue;
 }
+
+const AccordionSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)'
+  },
+  expanded: {}
+})(MuiAccordionSummary);
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
@@ -25,6 +34,11 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
     <div>
       {guidanceResponseArray.map((response: R4.IGuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
+        const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
+        const link = 'http://hl7.org/fhir/';
+        const valueSetObj = codeFilters.find((cf: any) => cf.valueSet);
+        const codeFilterArray = codeFilters.filter((cf: any) => !cf.valueSet);
+
         return (
           <Accordion key={guidanceResponseId}>
             <AccordionSummary>
@@ -36,63 +50,77 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <Grid container item xs direction="row">
+              <Grid container item xs direction="row" spacing={2}>
                 <Grid container item xs={6} direction="column">
                   <Grid item xs>
-                    <h4>dataRequirement:</h4>
+                    <h4>Requirements:</h4>
                   </Grid>
                   <Grid item xs>
-                    type: {fhirpath.evaluate(response, 'dataRequirement.type')}
+                    Type:{' '}
+                    <Link href={link.concat(fhirpath.evaluate(response, 'dataRequirement.type'))}>
+                      {fhirpath.evaluate(response, 'dataRequirement.type')}
+                    </Link>
                   </Grid>
                   <Grid item xs>
-                    <h5>codeFilter:</h5>
+                    <h4>Codes:</h4>
+                    <h5>{fhirpath.evaluate(valueSetObj, 'path')}:</h5>
                   </Grid>
-                  <Grid>path: {fhirpath.evaluate(response, 'dataRequirement.codeFilter.path[0]')}</Grid>
                   <Grid item xs>
                     <Typography style={{ overflowWrap: 'break-word' }}>
-                      valueSet: {fhirpath.evaluate(response, 'dataRequirement.codeFilter.valueSet')}
+                      <Link href={fhirpath.evaluate(valueSetObj, 'valueSet')}>
+                        {fhirpath.evaluate(valueSetObj, 'valueSet')}
+                      </Link>
                     </Typography>
                   </Grid>
                   <Grid item xs>
-                    path: {fhirpath.evaluate(response, 'dataRequirement.codeFilter.path[1]')}
-                  </Grid>
-                  <Grid item xs>
-                    {fhirpath.evaluate(response, 'dataRequirement.codeFilter.code.code').map((code: string) => {
+                    {codeFilterArray.map((cf: any) => {
+                      const path = fhirpath.evaluate(cf, 'path');
                       return (
-                        <Grid item xs key={code}>
-                          code: {code}
+                        <Grid item xs key={path}>
+                          <h5>{path}:</h5>
+                          <Grid item xs>
+                            {fhirpath.evaluate(cf, 'code.code').map((code: string) => {
+                              return (
+                                <Grid item xs key={code}>
+                                  - {code}
+                                </Grid>
+                              );
+                            })}
+                          </Grid>
                         </Grid>
                       );
                     })}
                   </Grid>
                   <Grid item xs>
-                    <h5>dateFilter:</h5>
-                  </Grid>
-                  <Grid item xs>
-                    path: {fhirpath.evaluate(response, 'dataRequirement.dateFilter.path')}
-                  </Grid>
-                  <Grid item xs>
-                    valuePeriod:
-                  </Grid>
-                  <Grid item xs>
-                    start: {fhirpath.evaluate(response, 'dataRequirement.dateFilter.valuePeriod.start')}
-                  </Grid>
-                  <Grid item xs>
-                    end: {fhirpath.evaluate(response, 'dataRequirement.dateFilter.valuePeriod.end')}
+                    <h4>Dates:</h4>
+                    {fhirpath.evaluate(response, 'dataRequirement.dateFilter').map((df: any) => {
+                      const path = fhirpath.evaluate(df, 'path');
+                      const startDate = new Date(fhirpath.evaluate(df, 'valuePeriod.start')).toDateString();
+                      const endDate = new Date(fhirpath.evaluate(df, 'valuePeriod.end')).toDateString();
+                      return (
+                        <Grid item xs key={path}>
+                          <h5>{fhirpath.evaluate(df, 'path')}:</h5>
+                          <Grid item xs>
+                            {startDate === 'Invalid Date' ? 'any' : startDate} -{' '}
+                            {endDate === 'Invalid Date' ? 'any' : endDate}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Grid>
-                <Grid container item xs={6} direction="column">
+                <Grid container item xs direction="column">
                   <Grid item xs>
-                    <h4>reasonCode:</h4>
-                  </Grid>
-                  <Grid item xs>
-                    system: {fhirpath.evaluate(response, 'reasonCode.coding.system')}
-                  </Grid>
-                  <Grid item xs>
-                    code: {fhirpath.evaluate(response, 'reasonCode.coding.code')}
-                  </Grid>
-                  <Grid item xs>
-                    display: {fhirpath.evaluate(response, 'reasonCode.coding.display')}
+                    <h4>Reason(s):</h4>
+                    {fhirpath.evaluate(response, 'reasonCode').map((reason: R4.IGuidanceResponse) => {
+                      const code = fhirpath.evaluate(reason, 'coding.code');
+                      const display = fhirpath.evaluate(reason, 'coding.display');
+                      return (
+                        <Grid item xs key={code}>
+                          - {code} ({display})
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Grid>
               </Grid>
