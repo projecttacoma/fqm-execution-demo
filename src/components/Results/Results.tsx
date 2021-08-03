@@ -1,4 +1,4 @@
-import { makeStyles, Grid, IconButton, AppBar, Tab, Tabs, Toolbar } from '@material-ui/core';
+import { makeStyles, Grid, IconButton, AppBar, Tab, Tabs } from '@material-ui/core';
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import ReactJson from 'react-json-view';
