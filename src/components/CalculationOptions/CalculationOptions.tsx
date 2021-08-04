@@ -18,25 +18,35 @@ function CalculationOptionsButtons() {
 
   const shouldCheckSDE = () => {
     return (
-      outputType !== 'rawResults' && calculationOptions.reportType === 'individual' && calculationOptions.calculateSDEs
+      outputType !== 'rawResults' &&
+      outputType !== 'dataRequirement' &&
+      calculationOptions.reportType === 'individual' &&
+      calculationOptions.calculateSDEs
     );
   };
 
   const shouldDisableSDE = () => {
     return (
-      outputType === 'rawResults' || (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+      outputType === 'rawResults' ||
+      outputType === 'dataRequirement' ||
+      (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
     );
   };
 
   const shouldCheckHTML = () => {
     return (
-      outputType !== 'rawResults' && calculationOptions.reportType !== 'summary' && calculationOptions.calculateHTML
+      outputType !== 'rawResults' &&
+      outputType !== 'dataRequirement' &&
+      calculationOptions.reportType !== 'summary' &&
+      calculationOptions.calculateHTML
     );
   };
 
   const shouldDisableHTML = () => {
     return (
-      outputType === 'rawResults' || (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
+      outputType === 'rawResults' ||
+      outputType === 'dataRequirement' ||
+      (outputType === 'measureReports' && calculationOptions.reportType === 'summary')
     );
   };
 

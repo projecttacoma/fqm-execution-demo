@@ -2,9 +2,9 @@ import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Grid } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { DropzoneRootProps, useDropzone } from 'react-dropzone';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { measureFileState, patientFileState, resultsState } from '../../state';
+import { measureFileState, patientFileState, resultsState, outputTypeState } from '../../state';
 
 const getColor = (props: DropzoneRootProps) => {
   if (props.isDragAccept) {
@@ -74,6 +74,7 @@ export const MeasureFileUpload = () => {
 export const PatientFileUpload = () => {
   const setPatientFileState = useSetRecoilState(patientFileState);
   const setResults = useSetRecoilState(resultsState);
+  const outputType = useRecoilValue(outputTypeState);
 
   const onPatientUpload = useCallback(
     files => {
@@ -94,7 +95,8 @@ export const PatientFileUpload = () => {
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop: onPatientUpload,
-    accept: '.json'
+    accept: '.json',
+    disabled: outputType === 'dataRequirement'
   });
 
   return (
