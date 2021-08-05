@@ -3,6 +3,9 @@ import { Accordion, AccordionDetails, Grid, Link, Typography, withStyles } from 
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
+import { measureFileState } from '../../state';
+import { useRecoilValue } from 'recoil';
+import { findValueSetName } from '../Helpers';
 import fhirpath from 'fhirpath';
 
 interface Props {
@@ -20,6 +23,7 @@ const AccordionSummary = withStyles({
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
   const guidanceResponseArray: R4.IGuidanceResponse[] = [];
+  const measureFile = useRecoilValue(measureFileState);
 
   guidanceResponses.forEach((element: R4.IGuidanceResponse) => {
     const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
@@ -38,6 +42,10 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
         const link = 'http://hl7.org/fhir/';
         const valueSetObj = codeFilters.find((cf: any) => cf.valueSet);
         const codeFilterArray = codeFilters.filter((cf: any) => !cf.valueSet);
+        const measureResource =
+          measureFile.content === null
+            ? null
+            : findValueSetName(measureFile.content, fhirpath.evaluate(valueSetObj, 'valueSet')[0]);
 
         return (
           <Accordion key={guidanceResponseId}>
@@ -66,6 +74,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                     <h5>{fhirpath.evaluate(valueSetObj, 'path')}:</h5>
                   </Grid>
                   <Grid item xs>
+                    {fhirpath.evaluate(measureResource, 'resource.name')}:
                     <Typography style={{ overflowWrap: 'break-word' }}>
                       <Link href={fhirpath.evaluate(valueSetObj, 'valueSet')}>
                         {fhirpath.evaluate(valueSetObj, 'valueSet')}

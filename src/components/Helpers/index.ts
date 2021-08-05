@@ -1,1 +1,1 @@
-export * from './PatientHelper';
+export * from './BundleHelpers';
