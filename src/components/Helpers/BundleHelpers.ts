@@ -10,7 +10,7 @@ export function findPatientInBundle(bundle: R4.IBundle, patientID: string): R4.I
   }
 }
 
-export function findValueSetName(bundle: R4.IBundle, url: string): R4.IBundle_Entry {
+export function findMeasureInBundle(bundle: R4.IBundle, url: string): R4.IBundle_Entry {
   const e = bundle.entry?.find(e => fhirpath.evaluate(e, 'resource.url')[0] === url);
   return e as R4.IBundle_Entry;
 }

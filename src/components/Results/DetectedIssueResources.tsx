@@ -5,7 +5,7 @@ import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
 import { measureFileState } from '../../state';
 import { useRecoilValue } from 'recoil';
-import { findValueSetName } from '../Helpers';
+import { findMeasureInBundle } from '../Helpers';
 import fhirpath from 'fhirpath';
 
 interface Props {
@@ -45,7 +45,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
         const measureResource =
           measureFile.content === null
             ? null
-            : findValueSetName(measureFile.content, fhirpath.evaluate(valueSetObj, 'valueSet')[0]);
+            : findMeasureInBundle(measureFile.content, fhirpath.evaluate(valueSetObj, 'valueSet')[0]);
 
         return (
           <Accordion key={guidanceResponseId}>
