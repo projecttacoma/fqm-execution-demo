@@ -1,16 +1,44 @@
 import React from 'react';
-import { Accordion, AccordionDetails, Grid, Link, Typography, withStyles } from '@material-ui/core';
+import {
+  Accordion,
+  AccordionDetails,
+  Grid,
+  Link,
+  Typography,
+  withStyles,
+  Popover,
+  makeStyles,
+  createStyles,
+  Theme
+} from '@material-ui/core';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
-import { measureFileState } from '../../state';
+import { measureFileState, patientFileState } from '../../state';
 import { useRecoilValue } from 'recoil';
-import { findValueSetInBundle } from '../Helpers';
+import { findResourceInBundle, findValueSetInBundle } from '../Helpers';
 import fhirpath from 'fhirpath';
 
 interface Props {
   detectedIssue: R4.IDetectedIssue;
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    popover: { pointerEvents: 'none' },
+    paper: {
+      padding: theme.spacing(1)
+    },
+    reasonDetail: {
+      paddingLeft: '32px',
+      paddingTop: '12px',
+
+      '&:hover': {
+        cursor: 'pointer'
+      }
+    }
+  })
+);
 
 const AccordionSummary = withStyles({
   root: {
@@ -24,6 +52,26 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
   const guidanceResponseArray: R4.IGuidanceResponse[] = [];
   const measureFile = useRecoilValue(measureFileState);
+  const patientFile = useRecoilValue(patientFileState);
+  const classes = useStyles();
+  const [popoverContent, setPopoverContent] = React.useState<any>(null);
+  const [popup, setPopup] = React.useState<HTMLElement | null>(null);
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+    reasonDetailExtension: R4.IExtension
+  ) => {
+    const reference = fhirpath.evaluate(reasonDetailExtension, 'extension.valueReference.reference')[0];
+    if (patientFile.content) {
+      const resource = findResourceInBundle(patientFile.content, reference);
+      setPopup(event.currentTarget);
+      setPopoverContent(JSON.stringify(resource, null, 2));
+    }
+  };
+  const handlePopoverClose = () => {
+    setPopup(null);
+    setPopoverContent(null);
+  };
+  const open = Boolean(popup);
 
   guidanceResponses.forEach((element: R4.IGuidanceResponse) => {
     const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
@@ -36,6 +84,20 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
 
   return (
     <div>
+      <Popover
+        id="mouse-over-popover"
+        className={classes.popover}
+        classes={{ paper: classes.paper }}
+        open={open}
+        anchorEl={popup}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        onClose={handlePopoverClose}
+      >
+        <pre style={{ tabSize: 2 }}>
+          <code>{popoverContent}</code>
+        </pre>
+      </Popover>
       {guidanceResponseArray.map((response: R4.IGuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
         const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
@@ -124,9 +186,23 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                     {fhirpath.evaluate(response, 'reasonCode').map((reason: R4.IGuidanceResponse) => {
                       const code = fhirpath.evaluate(reason, 'coding.code');
                       const display = fhirpath.evaluate(reason, 'coding.display');
+                      const extension = fhirpath.evaluate(reason, "coding.extension.where(url='ReasonDetail')")[0];
+
                       return (
                         <Grid item xs key={code}>
                           - {code} ({display})
+                          {extension && (
+                            <div
+                              className={classes.reasonDetail}
+                              aria-owns={open ? 'mouse-over-popover' : undefined}
+                              aria-haspopup="true"
+                              onMouseEnter={e => handlePopoverOpen(e, extension)}
+                              onMouseLeave={handlePopoverClose}
+                            >
+                              {fhirpath.evaluate(extension, 'extension.valueReference.reference')} (
+                              {fhirpath.evaluate(extension, 'extension.valueString')})
+                            </div>
+                          )}
                         </Grid>
                       );
                     })}
