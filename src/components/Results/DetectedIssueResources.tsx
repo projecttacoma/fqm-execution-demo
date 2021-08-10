@@ -31,7 +31,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     reasonDetail: {
       paddingLeft: '32px',
-      paddingTop: '12px'
+      paddingTop: '12px',
+
+      '&:hover': {
+        cursor: 'pointer'
+      }
     }
   })
 );
