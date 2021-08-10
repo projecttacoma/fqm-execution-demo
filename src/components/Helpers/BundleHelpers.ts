@@ -17,3 +17,13 @@ export function findValueSetInBundle(bundle: R4.IBundle, url: string): R4.IValue
     return e.resource as R4.IValueSet;
   }
 }
+
+export function findResourceInBundle(bundle: R4.IBundle, reference: string): R4.IResourceList | null {
+  const [resourceType, id] = reference.split('/');
+  const e = bundle.entry?.find(e => e.resource?.resourceType === resourceType && e.resource?.id === id);
+  if (e === undefined) {
+    return null;
+  } else {
+    return e.resource as R4.IResourceList;
+  }
+}
