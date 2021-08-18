@@ -12,7 +12,6 @@ import {
   Theme
 } from '@material-ui/core';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Enums } from 'fqm-execution';
 import { measureFileState, patientFileState } from '../../state';
 import { useRecoilValue } from 'recoil';
@@ -20,7 +19,7 @@ import { findResourceInBundle, findValueSetInBundle } from '../Helpers';
 import fhirpath from 'fhirpath';
 
 interface Props {
-  detectedIssue: R4.IDetectedIssue;
+  detectedIssue: fhir4.DetectedIssue;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -50,7 +49,7 @@ const AccordionSummary = withStyles({
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
-  const guidanceResponseArray: R4.IGuidanceResponse[] = [];
+  const guidanceResponseArray: fhir4.GuidanceResponse[] = [];
   const measureFile = useRecoilValue(measureFileState);
   const patientFile = useRecoilValue(patientFileState);
   const classes = useStyles();
@@ -58,7 +57,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const [popup, setPopup] = React.useState<HTMLElement | null>(null);
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
-    reasonDetailExtension: R4.IExtension
+    reasonDetailExtension: fhir4.Extension
   ) => {
     const reference = fhirpath.evaluate(reasonDetailExtension, 'extension.valueReference.reference')[0];
     if (patientFile.content) {
@@ -73,7 +72,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   };
   const open = Boolean(popup);
 
-  guidanceResponses.forEach((element: R4.IGuidanceResponse) => {
+  guidanceResponses.forEach((element: fhir4.GuidanceResponse) => {
     const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
     if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
       guidanceResponseArray.push(element);
@@ -98,7 +97,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
           <code>{popoverContent}</code>
         </pre>
       </Popover>
-      {guidanceResponseArray.map((response: R4.IGuidanceResponse, index: number) => {
+      {guidanceResponseArray.map((response: fhir4.GuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
         const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
         const link = 'http://hl7.org/fhir/';
@@ -183,7 +182,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                 <Grid container item xs direction="column">
                   <Grid item xs>
                     <h4>Reason(s):</h4>
-                    {fhirpath.evaluate(response, 'reasonCode').map((reason: R4.IGuidanceResponse) => {
+                    {fhirpath.evaluate(response, 'reasonCode').map((reason: fhir4.GuidanceResponse) => {
                       const code = fhirpath.evaluate(reason, 'coding.code');
                       const display = fhirpath.evaluate(reason, 'coding.display');
                       const extension = fhirpath.evaluate(reason, "coding.extension.where(url='ReasonDetail')")[0];

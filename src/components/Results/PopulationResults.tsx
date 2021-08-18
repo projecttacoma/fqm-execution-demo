@@ -3,7 +3,6 @@ import { patientFileState } from '../../state';
 import React from 'react';
 import { findPatientInBundle } from '../Helpers';
 import { useRecoilValue } from 'recoil';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import fhirpath from 'fhirpath';
 
 const useStyles = makeStyles({
@@ -16,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  results: R4.IMeasureReport_Group;
+  results: fhir4.MeasureReportGroup;
   id: string;
 }
 

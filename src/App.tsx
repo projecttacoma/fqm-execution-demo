@@ -8,7 +8,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { OptionsRow, DataImportRow } from './components/Layout';
 import Button from '@material-ui/core/Button';
 import { Calculator, CalculatorTypes } from 'fqm-execution';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useHistory } from 'react-router-dom';
 import {
@@ -137,7 +136,7 @@ export default function App() {
           const measureReportEntry = results.entry?.find(e => e.resource?.resourceType === 'MeasureReport');
 
           if (measureReportEntry?.resource) {
-            const measureReport = measureReportEntry.resource as R4.IMeasureReport;
+            const measureReport = measureReportEntry.resource as fhir4.MeasureReport;
             setHTMLs([
               {
                 groupId: measureReport.id || '',

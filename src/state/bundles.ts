@@ -1,9 +1,8 @@
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import { atom } from 'recoil';
 
 export interface FileUploadState {
   name: string | null;
-  content: R4.IBundle | null;
+  content: fhir4.Bundle | null;
   fromFileUpload?: boolean;
 }
 

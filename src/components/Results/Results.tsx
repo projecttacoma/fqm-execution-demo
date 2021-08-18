@@ -11,7 +11,6 @@ import { HTML } from '../../App';
 import { PopulationResults, DetectedIssueResources } from '../Results';
 import { useRecoilValue } from 'recoil';
 import { calculationOptionsState, outputTypeState, resultsState } from '../../state';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import fhirpath from 'fhirpath';
 import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router-dom';
@@ -106,7 +105,7 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
   const displayTabularResults = () => {
     return (
       <Grid container item xs={12} direction="row" justify="center" alignItems="center">
-        {fhirpath.evaluate(results, 'MeasureReport.group').map((group: R4.IMeasureReport_Group) => {
+        {fhirpath.evaluate(results, 'MeasureReport.group').map((group: fhir4.MeasureReportGroup) => {
           const id = results ? fhirpath.evaluate(results, 'MeasureReport.subject.reference')[0].split('/') : '';
           return (
             <Grid container item xs={12} direction="column" justify="center" alignItems="center" key={group.id}>
@@ -123,7 +122,7 @@ const Results: React.FC<Props> = ({ measureFile, patientFile, htmls }) => {
     return (
       <>
         {results &&
-          detectedIssues.map((issue: R4.IDetectedIssue, index: number) => {
+          detectedIssues.map((issue: fhir4.DetectedIssue, index: number) => {
             const detectedIssueId = fhirpath.evaluate(issue, 'id');
             return (
               <Grid
