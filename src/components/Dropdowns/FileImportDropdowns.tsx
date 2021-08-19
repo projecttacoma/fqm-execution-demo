@@ -4,7 +4,6 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import {
   measureDropdownOptionsState,
   measureFileState,
@@ -43,7 +42,7 @@ export function MeasureDropdown() {
       .then(data => {
         setMeasureFile({
           name,
-          content: data as R4.IBundle,
+          content: data as fhir4.Bundle,
           fromFileUpload: false
         });
       })
@@ -88,7 +87,7 @@ export function PatientDropdown() {
       .then(data => {
         setPatientFile({
           name,
-          content: data as R4.IBundle,
+          content: data as fhir4.Bundle,
           fromFileUpload: false
         });
       })

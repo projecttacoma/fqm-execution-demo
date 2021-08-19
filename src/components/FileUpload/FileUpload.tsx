@@ -1,4 +1,3 @@
-import { R4 } from '@ahryman40k/ts-fhir-types';
 import { Grid } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { DropzoneRootProps, useDropzone } from 'react-dropzone';
@@ -47,7 +46,7 @@ export const MeasureFileUpload = () => {
       reader.onload = () => {
         setMeasureFileState({
           name: measureBundleFile.path,
-          content: JSON.parse(reader.result as string) as R4.IBundle,
+          content: JSON.parse(reader.result as string) as fhir4.Bundle,
           fromFileUpload: true
         });
       };
@@ -84,7 +83,7 @@ export const PatientFileUpload = () => {
       reader.onload = () => {
         setPatientFileState({
           name: patientBundleFile.path,
-          content: JSON.parse(reader.result as string) as R4.IBundle,
+          content: JSON.parse(reader.result as string) as fhir4.Bundle,
           fromFileUpload: true
         });
       };
