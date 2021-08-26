@@ -47,6 +47,71 @@ const AccordionSummary = withStyles({
   expanded: {}
 })(MuiAccordionSummary);
 
+/**
+ * Find string in JSON popup (from Accordion view) to highlight for reasonDetail
+ */
+function getSearchString(resource: any, path: string): string | null {
+  if (resource) {
+    // split path array to allow access to nested layers, if there are any
+    const pathArray = path.split('.');
+    // create regex to find the first layer to traverse from the path
+    let desiredPathRegExp = new RegExp(pathArray[0] + '.*');
+    // search resource to find the key to the first layer in desired path
+    const key = Object.keys(resource).find(k => desiredPathRegExp.test(k));
+    if (key) {
+      // slice path array to continue drilling down
+      const newPathArray = pathArray.slice(1);
+      let finalValue = resource[key];
+      let finalKey = key;
+      // update final key/value if more nested layers exist
+      newPathArray.forEach(k => {
+        if (finalValue) {
+          finalValue = finalValue[k];
+          finalKey = k;
+        }
+      });
+      if (finalValue === undefined) {
+        return null;
+      }
+      // preserve quotes if string
+      if (typeof finalValue === 'string') {
+        finalValue = `"${finalValue}"`;
+      }
+      return `"${finalKey}": ${finalValue}`;
+    }
+  }
+  return null;
+}
+
+/**
+ * Highlight relevant property in Accordion view popup for reasonDetail
+ */
+function highlightJSON(searchString: string | null, resource: any): string | JSX.Element | JSX.Element[] {
+  const JSONString = JSON.stringify(resource, null, 2);
+  if (searchString) {
+    /* split entire resource JSON into contents before and after 
+    the desired search string, then apply highlighting to
+    the search string with <mark>
+    */
+    const [beginning, end] = JSONString.split(searchString);
+    return (
+      <pre>
+        <code>
+          {beginning}
+          <mark>{searchString}</mark>
+          {end}
+        </code>
+      </pre>
+    );
+  } else {
+    return (
+      <pre>
+        <code>{JSONString}</code>
+      </pre>
+    );
+  }
+}
+
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
   const guidanceResponseArray: fhir4.GuidanceResponse[] = [];
@@ -55,15 +120,18 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const classes = useStyles();
   const [popoverContent, setPopoverContent] = React.useState<any>(null);
   const [popup, setPopup] = React.useState<HTMLElement | null>(null);
+
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
     reasonDetailExtension: fhir4.Extension
   ) => {
     const reference = fhirpath.evaluate(reasonDetailExtension, 'extension.valueReference.reference')[0];
+    const path = fhirpath.evaluate(reasonDetailExtension, 'extension.valueString')[0];
     if (patientFile.content) {
       const resource = findResourceInBundle(patientFile.content, reference);
       setPopup(event.currentTarget);
-      setPopoverContent(JSON.stringify(resource, null, 2));
+      const searchString = getSearchString(resource, path);
+      setPopoverContent(highlightJSON(searchString, resource));
     }
   };
   const handlePopoverClose = () => {
@@ -93,9 +161,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         onClose={handlePopoverClose}
       >
-        <pre style={{ tabSize: 2 }}>
-          <code>{popoverContent}</code>
-        </pre>
+        {popoverContent}
       </Popover>
       {guidanceResponseArray.map((response: fhir4.GuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
