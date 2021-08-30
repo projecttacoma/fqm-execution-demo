@@ -87,29 +87,31 @@ function getSearchString(resource: any, path: string): string | null {
  * Highlight relevant property in Accordion view popup for reasonDetail
  */
 function highlightJSON(searchString: string | null, resource: any): string | JSX.Element | JSX.Element[] {
-  const JSONString = JSON.stringify(resource, null, 2);
+  const jsonString = JSON.stringify(resource, null, 2);
   if (searchString) {
     /* split entire resource JSON into contents before and after 
     the desired search string, then apply highlighting to
     the search string with <mark>
     */
-    const [beginning, end] = JSONString.split(searchString);
-    return (
-      <pre>
-        <code>
-          {beginning}
-          <mark>{searchString}</mark>
-          {end}
-        </code>
-      </pre>
-    );
-  } else {
-    return (
-      <pre>
-        <code>{JSONString}</code>
-      </pre>
-    );
+    const splitArr = jsonString.split(searchString);
+    if (splitArr.length === 2) {
+      const [beginning, end] = splitArr;
+      return (
+        <pre>
+          <code>
+            {beginning}
+            <mark>{searchString}</mark>
+            {end}
+          </code>
+        </pre>
+      );
+    }
   }
+  return (
+    <pre>
+      <code>{jsonString}</code>
+    </pre>
+  );
 }
 
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
