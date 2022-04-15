@@ -150,7 +150,7 @@ export default function App() {
       }
     } else if (outputType === 'dataRequirement') {
       if (measureFile.content) {
-        const { results } = await Calculator.calculateDataRequirements(measureFile.content);
+        const { results } = await Calculator.calculateDataRequirements(measureFile.content, options);
         setResults(results);
       }
     }
