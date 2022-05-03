@@ -12,11 +12,17 @@ import {
   Theme
 } from '@material-ui/core';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import { Enums } from 'fqm-execution';
 import { measureFileState, patientFileState } from '../../state';
 import { useRecoilValue } from 'recoil';
 import { findResourceInBundle, findValueSetInBundle } from '../Helpers';
 import fhirpath from 'fhirpath';
+import {
+  Comparator,
+  ValueFilterExtension,
+  ValueFilterExtensionComparator,
+  ValueFilterExtensionPath,
+  ValueFilterExtensionValue
+} from '../../types/filters';
 
 interface Props {
   detectedIssue: fhir4.DetectedIssue;
@@ -76,6 +82,9 @@ function getSearchString(resource: any, path: string): string | null {
       // preserve quotes if string
       if (typeof finalValue === 'string') {
         finalValue = `"${finalValue}"`;
+      } else if (typeof finalValue === 'object') {
+        // TODO: Highlight entire object (hard)
+        return `"${finalKey}"`;
       }
       return `"${finalKey}": ${finalValue}`;
     }
@@ -114,9 +123,77 @@ function highlightJSON(searchString: string | null, resource: any): string | JSX
   );
 }
 
+function renderValueFilter(gr: fhir4.GuidanceResponse) {
+  const vfExtension: ValueFilterExtension[] = fhirpath.evaluate(
+    gr,
+    "dataRequirement.extension.where(url = 'http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-valueFilter')"
+  );
+
+  if (vfExtension?.length > 0) {
+    return (
+      <>
+        <h4>Values:</h4>
+        {vfExtension.map(({ extension }) => {
+          const path = extension.find(e => e.url === 'path') as ValueFilterExtensionPath;
+          const comparator = extension.find(e => e.url === 'comparator') as ValueFilterExtensionComparator;
+          const value = extension.find(e => e.url === 'value') as ValueFilterExtensionValue;
+
+          return (
+            <Grid item xs key={path.valueString}>
+              - <i>.{path.valueString}</i>
+              {` ${renderComparator(comparator.valueCode)} `}
+              {` ${renderValue(value)}`}
+            </Grid>
+          );
+        })}
+      </>
+    );
+  }
+  return '';
+}
+
+function renderComparator(c: Comparator) {
+  switch (c) {
+    case 'eq':
+      return '=';
+    case 'gt':
+      return '>';
+    case 'lt':
+      return '<';
+    case 'ge':
+      return '>=';
+    case 'le':
+      return '<=';
+  }
+}
+
+function renderValue(val: ValueFilterExtensionValue) {
+  if (val.valueString) {
+    return val.valueString;
+  } else if (val.valueBoolean) {
+    return val.valueBoolean.toString();
+  } else if (val.valueInteger) {
+    return val.valueInteger.toString();
+  } else if (val.valueQuantity) {
+    return renderQuantity(val.valueQuantity);
+  } else if (val.valueRatio) {
+    return `${val.valueRatio.numerator}/${val.valueRatio.denominator}`;
+  } else if (val.valueRange) {
+    return `${renderQuantity(val.valueRange.low)} - ${renderQuantity(val.valueRange.high)}`;
+  }
+
+  return '';
+}
+
+function renderQuantity(q: fhir4.Quantity | undefined) {
+  if (q) {
+    return `${q.value} ${q.unit}`;
+  }
+  return '';
+}
+
 const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   const guidanceResponses = fhirpath.evaluate(detectedIssue, 'contained.GuidanceResponse');
-  const guidanceResponseArray: fhir4.GuidanceResponse[] = [];
   const measureFile = useRecoilValue(measureFileState);
   const patientFile = useRecoilValue(patientFileState);
   const classes = useStyles();
@@ -142,15 +219,6 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
   };
   const open = Boolean(popup);
 
-  guidanceResponses.forEach((element: fhir4.GuidanceResponse) => {
-    const reasonCode = fhirpath.evaluate(element, 'reasonCode.coding.code')[0];
-    if (reasonCode === Enums.CareGapReasonCode.MISSING || reasonCode === Enums.CareGapReasonCode.PRESENT) {
-      guidanceResponseArray.push(element);
-    } else {
-      guidanceResponseArray.unshift(element);
-    }
-  });
-
   return (
     <div>
       <Popover
@@ -165,7 +233,7 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
       >
         {popoverContent}
       </Popover>
-      {guidanceResponseArray.map((response: fhir4.GuidanceResponse, index: number) => {
+      {guidanceResponses.map((response: fhir4.GuidanceResponse, index: number) => {
         const guidanceResponseId = fhirpath.evaluate(response, 'id');
         const codeFilters = fhirpath.evaluate(response, 'dataRequirement.codeFilter');
         const link = 'http://hl7.org/fhir/';
@@ -245,6 +313,9 @@ const DetectedIssueResources: React.FC<Props> = ({ detectedIssue }) => {
                         </Grid>
                       );
                     })}
+                  </Grid>
+                  <Grid item xs>
+                    {renderValueFilter(response)}
                   </Grid>
                 </Grid>
                 <Grid container item xs direction="column">
